@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -37,93 +38,13 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        val authViewModel : AuthViewModel by viewModels()
         setContent {
-            LogIn()
+            MistTheme {
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    MyAppNavigation(modifier = Modifier.padding(innerPadding) ,authViewModel = authViewModel)
+                }
+            }
         }
     }
-}
-
-@Composable
-fun LogIn() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(start = 55.dp, top = 88.dp, end = 55.dp, bottom = 248.dp)
-            .background(color = MaterialTheme.colorScheme.background),
-        verticalArrangement = Arrangement.spacedBy(0.dp, Alignment.Top),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Image(
-            modifier = Modifier
-                .width(250.dp)
-                .height(250.dp),
-            painter = painterResource(id = R.drawable.logo),
-            contentDescription = "logo de la aplicación",
-            contentScale = ContentScale.Crop
-        )
-
-        Row(
-            modifier = Modifier
-                .border(
-                    width = 1.dp,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    shape = RoundedCornerShape(size = 20.dp)
-                )
-                .width(170.dp)
-                .height(50.dp)
-                .background(
-                    color = MaterialTheme.colorScheme.background,
-                    shape = RoundedCornerShape(size = 20.dp)
-                )
-                .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                modifier = Modifier
-                    .width(117.dp)
-                    .height(20.dp),
-                text = "Inicia Sesión",
-                // MonoText
-                style = TextStyle(
-                    fontSize = 15.sp,
-                    fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_bold)),
-                    color = MaterialTheme.colorScheme.onBackground,
-                )
-            )
-        }
-
-        Row(
-            modifier = Modifier
-                .width(170.dp)
-                .height(50.dp)
-                .background(
-                    color = MaterialTheme.colorScheme.primary,
-                    shape = RoundedCornerShape(size = 20.dp)
-                )
-                .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                modifier = Modifier
-                    .width(117.dp)
-                    .height(20.dp),
-                text = "Inicia Sesión",
-                // MonoText
-                style = TextStyle(
-                    fontSize = 15.sp,
-                    fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_bold)),
-                    color = MaterialTheme.colorScheme.onBackground,
-                )
-            )
-        }
-    }
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun LogInPreview() {
-    LogIn()
 }
