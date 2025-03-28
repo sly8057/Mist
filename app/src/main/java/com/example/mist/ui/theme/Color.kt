@@ -1,6 +1,5 @@
 package com.example.mist.ui.theme
 
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
 val Purple80 = Color(0xFFD0BCFF)
@@ -18,8 +17,3 @@ val HunterGreen = Color(0xFF285826)
 val DarkGreen = Color(0xFF123524)
 val EeireBlack = Color(0xFF1A1A19)
 val Night = Color(0xFF0D0D0D)
-
-val colorStopsGradient = arrayOf(0.0f to HunterGreen, 0.75f to Night)
-val mainColorGradient = listOf(ForestGreen, HunterGreen, DarkGreen, EeireBlack)
-
-val backgroundColor = Brush.verticalGradient(colorStops = colorStopsGradient)

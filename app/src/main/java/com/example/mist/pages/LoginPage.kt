@@ -8,9 +8,7 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,13 +16,20 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.outlined.Lock
+//import androidx.compose.material.icons.outlined.LockOpen
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,10 +44,13 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TileMode
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -55,6 +63,7 @@ fun LoginPage(modifier: Modifier = Modifier, navController: NavController, authV
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var passwordVisible by remember { mutableStateOf(false) }
 
     val infiniteTransition = rememberInfiniteTransition(label = "loginBanner")
     val targetOffset = with(LocalDensity.current) { 1000.dp.toPx() }
@@ -118,9 +127,13 @@ fun LoginPage(modifier: Modifier = Modifier, navController: NavController, authV
             OutlinedTextField(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 20.dp)
-                    .background(Night.copy(alpha = 0.1f), shape = RoundedCornerShape(8.dp)),
-                colors = OutlinedTextFieldDefaults.colors(Color.Transparent),
+                    .padding(horizontal = 20.dp),
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = Night.copy(alpha = 0.1f),
+                    unfocusedContainerColor = Night.copy(alpha = 0.1f),
+                    focusedTextColor = DutchWhite,
+                    unfocusedTextColor = DutchWhite.copy(alpha = 0.5f)
+                ),
                 value = email,
                 onValueChange = { email = it },
                 label = { Text(text = "Correo electrónico") }
@@ -131,9 +144,24 @@ fun LoginPage(modifier: Modifier = Modifier, navController: NavController, authV
             OutlinedTextField(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 20.dp)
-                    .background(Night.copy(alpha = 0.1f), shape = RoundedCornerShape(8.dp)),
-                colors = OutlinedTextFieldDefaults.colors(Color.Transparent),
+                    .padding(horizontal = 20.dp),
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = Night.copy(alpha = 0.1f),
+                    unfocusedContainerColor = Night.copy(alpha = 0.1f),
+                    focusedTextColor = DutchWhite,
+                    unfocusedTextColor = DutchWhite.copy(alpha = 0.5f)
+                ),
+                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                trailingIcon = {
+                    val icon = if (passwordVisible) getImageVectorFromDrawable(R.drawable.ic_lock) else getImageVectorFromDrawable(R.drawable.ic_lock_open)
+                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                        Icon(
+                            //imageVector = if (passwordVisible) Icons.Outlined.Lock else Icons.Outlined.LockOpen,
+                            imageVector = icon,
+                            contentDescription = if (passwordVisible) "Contraseña visible" else "Contraseña oculta",
+                            tint = DutchWhite.copy(alpha = 0.5f)
+                    )}
+                },
                 value = password,
                 onValueChange = { password = it },
                 label = { Text(text = "Contraseña") }
@@ -142,7 +170,10 @@ fun LoginPage(modifier: Modifier = Modifier, navController: NavController, authV
             Spacer(modifier = Modifier.height(4.dp))
 
             TextButton(onClick = { }, modifier = Modifier.align(Alignment.End).padding(end = 20.dp)) {
-                Text(text = "No tienes cuenta? Registrate")
+                Text(text = "Olvidaste la contraseña?",
+                    style = TextStyle(
+                        fontSize = 12.sp,
+                        fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_bold))))
             }
 
             Spacer(modifier = Modifier.height(30.dp))
@@ -164,9 +195,18 @@ fun LoginPage(modifier: Modifier = Modifier, navController: NavController, authV
                     style = TextStyle(
                         fontSize = 15.sp,
                         fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_bold)),
-                        // color = MaterialTheme.colorScheme.onBackground,
                     )
                 )
+            }
+
+            Spacer(modifier = Modifier.height(50.dp))
+
+            TextButton(onClick = { }) {
+                Text(text = "No tienes cuenta? Registrate",
+                    style = TextStyle(
+                        fontSize = 15.sp,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_bold))))
             }
 
         }
