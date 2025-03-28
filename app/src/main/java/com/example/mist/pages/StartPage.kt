@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -27,77 +28,84 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.mist.AuthViewModel
 import com.example.mist.R
+import com.example.mist.ui.theme.*
 
 @Composable
 fun StartPage(modifier: Modifier = Modifier, navController: NavController, authViewModel: AuthViewModel) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(start = 55.dp, top = 88.dp, end = 55.dp, bottom = 248.dp)
-            .background(color = MaterialTheme.colorScheme.background),
-        verticalArrangement = Arrangement.spacedBy(0.dp, Alignment.Top),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Image(
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .background(backgroundColor)){
+        Column(
             modifier = Modifier
-                .width(250.dp)
-                .height(250.dp),
-            painter = painterResource(id = R.drawable.logo),
-            contentDescription = "logo de la aplicación",
-            contentScale = ContentScale.Crop
-        )
-
-        Row(
-            modifier = Modifier
-                .border(
-                    width = 1.dp,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    shape = RoundedCornerShape(size = 20.dp)
-                )
-                .width(170.dp)
-                .height(50.dp)
-                .background(
-                    color = MaterialTheme.colorScheme.background,
-                    shape = RoundedCornerShape(size = 20.dp)
-                )
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically,
+                .fillMaxSize()
+                .padding(start = 55.dp, top = 88.dp, end = 55.dp, bottom = 248.dp),
+                //.background(color = MaterialTheme.colorScheme.background),
+            verticalArrangement = Arrangement.spacedBy(0.dp, Alignment.Top),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = "Inicia Sesión",
-                // MonoText
-                style = TextStyle(
-                    fontSize = 15.sp,
-                    fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_bold)),
-                    color = MaterialTheme.colorScheme.onBackground,
-                )
+            Image(
+                modifier = Modifier
+                    .width(250.dp)
+                    .height(250.dp),
+                painter = painterResource(id = R.drawable.logo),
+                contentDescription = "logo de la aplicación",
+                contentScale = ContentScale.Crop
             )
-        }
 
-        Spacer(modifier = Modifier.height(30.dp))
+            Spacer(modifier = Modifier.height(100.dp))
 
-        Row(
-            modifier = Modifier
-                .width(170.dp)
-                .height(50.dp)
-                .background(
-                    color = MaterialTheme.colorScheme.primary,
-                    shape = RoundedCornerShape(size = 20.dp)
+            Row(
+                modifier = Modifier
+                    .border(
+                        width = 1.dp,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        shape = RoundedCornerShape(size = 20.dp)
+                    )
+                    .width(170.dp)
+                    .height(50.dp)
+                    .background(
+                        color = MaterialTheme.colorScheme.background,
+                        shape = RoundedCornerShape(size = 20.dp)
+                    )
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = "Inicia Sesión",
+                    // MonoText
+                    style = TextStyle(
+                        fontSize = 15.sp,
+                        fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_bold)),
+                        color = MaterialTheme.colorScheme.onBackground,
+                    )
                 )
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = "Registrate",
-                // MonoText
-                style = TextStyle(
-                    fontSize = 15.sp,
-                    fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_bold)),
-                    color = MaterialTheme.colorScheme.onBackground,
+            }
+
+            Spacer(modifier = Modifier.height(30.dp))
+
+            Row(
+                modifier = Modifier
+                    .width(170.dp)
+                    .height(50.dp)
+                    .background(
+                        color = MaterialTheme.colorScheme.primary,
+                        shape = RoundedCornerShape(size = 20.dp)
+                    )
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = "Registrate",
+                    // MonoText
+                    style = TextStyle(
+                        fontSize = 15.sp,
+                        fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_bold)),
+                        color = MaterialTheme.colorScheme.onBackground,
+                    )
                 )
-            )
+            }
         }
     }
 }
