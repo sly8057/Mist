@@ -19,9 +19,7 @@ val DarkGreen = Color(0xFF123524)
 val EeireBlack = Color(0xFF1A1A19)
 val Night = Color(0xFF0D0D0D)
 
-val backgroundColor = Brush.verticalGradient(colorStops = arrayOf(
-    0.0f to HunterGreen,
-    //0.75f to EeireBlack,
-    0.75f to Night,
-    //1f to Color.Black
-))
+val colorStopsGradient = arrayOf(0.0f to HunterGreen, 0.75f to Night)
+val mainColorGradient = listOf(ForestGreen, HunterGreen, DarkGreen, EeireBlack)
+
+val backgroundColor = Brush.verticalGradient(colorStops = colorStopsGradient)
