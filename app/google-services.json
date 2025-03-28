@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "315271743749",
+    "project_id": "mist-9798e",
+    "storage_bucket": "mist-9798e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:315271743749:android:53118fd669ad85bfa58f6c",
+        "android_client_info": {
+          "package_name": "com.example.mist"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBHuAOkTyS79OXn72KRfpGX0EhCSwB1P5s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

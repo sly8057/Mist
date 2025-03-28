@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -54,7 +56,7 @@ fun StartPage(modifier: Modifier = Modifier, navController: NavController, authV
 
             Spacer(modifier = Modifier.height(100.dp))
 
-            Row(
+            Button (
                 modifier = Modifier
                     .border(
                         width = 1.dp,
@@ -62,14 +64,13 @@ fun StartPage(modifier: Modifier = Modifier, navController: NavController, authV
                         shape = RoundedCornerShape(size = 20.dp)
                     )
                     .width(170.dp)
-                    .height(50.dp)
-                    .background(
-                        color = MaterialTheme.colorScheme.background,
-                        shape = RoundedCornerShape(size = 20.dp)
-                    )
-                    .padding(16.dp),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically,
+                    .height(50.dp),
+                shape = RoundedCornerShape(size = 20.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.background,
+                    contentColor = MaterialTheme.colorScheme.onBackground
+                ),
+                onClick = { navController.navigate("login") }
             ) {
                 Text(
                     text = "Inicia Sesión",
@@ -77,24 +78,23 @@ fun StartPage(modifier: Modifier = Modifier, navController: NavController, authV
                     style = TextStyle(
                         fontSize = 15.sp,
                         fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_bold)),
-                        color = MaterialTheme.colorScheme.onBackground,
+                        // color = MaterialTheme.colorScheme.onBackground,
                     )
                 )
             }
 
             Spacer(modifier = Modifier.height(30.dp))
 
-            Row(
+            Button (
                 modifier = Modifier
                     .width(170.dp)
-                    .height(50.dp)
-                    .background(
-                        color = MaterialTheme.colorScheme.primary,
-                        shape = RoundedCornerShape(size = 20.dp)
-                    )
-                    .padding(16.dp),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically,
+                    .height(50.dp),
+                shape = RoundedCornerShape(size = 20.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onBackground
+                ),
+                onClick = { navController.navigate("signup") }
             ) {
                 Text(
                     text = "Registrate",
@@ -102,7 +102,7 @@ fun StartPage(modifier: Modifier = Modifier, navController: NavController, authV
                     style = TextStyle(
                         fontSize = 15.sp,
                         fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_bold)),
-                        color = MaterialTheme.colorScheme.onBackground,
+                        // color = MaterialTheme.colorScheme.onBackground,
                     )
                 )
             }
