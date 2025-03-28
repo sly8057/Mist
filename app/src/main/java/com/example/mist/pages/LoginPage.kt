@@ -66,38 +66,31 @@ fun LoginPage(modifier: Modifier = Modifier, navController: NavController, authV
         label = "bannerOffset"
     )
 
-
-    Box(modifier = Modifier
+    Column(modifier = Modifier
         .fillMaxSize()
-        .background(EeireBlack)) {
+        .blur(40.dp)
+        .drawWithCache {
+            val brushSize = 400f
+            val brush = Brush.linearGradient(
+                colors = mainColorGradient,
+                start = Offset(bannerOffset, bannerOffset),
+                end = Offset(bannerOffset + brushSize, bannerOffset + brushSize),
+                tileMode = TileMode.Mirror
+            )
+            onDrawBehind {drawRect(brush)}
+        },
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Spacer(modifier = Modifier.height(250.dp))
 
-        Column(
-            modifier = modifier.fillMaxSize(),
+        Column(modifier =  Modifier
+            .fillMaxSize()
+            .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
+            .background(EeireBlack),
+            horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Box(modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(bottomEnd = 20.dp, bottomStart = 20.dp))
-            ){
-                Spacer(modifier = Modifier
-                    .height(250.dp)
-                    .fillMaxWidth()
-                    .blur(40.dp)
-                    .drawWithCache {
-                        val brushSize = 400f
-                        val brush = Brush.linearGradient(
-                            colors = mainColorGradient,
-                            start = Offset(bannerOffset, bannerOffset),
-                            end = Offset(bannerOffset + brushSize, bannerOffset + brushSize),
-                            tileMode = TileMode.Mirror
-                        )
-                        onDrawBehind {drawRect(brush)}
-                    }
-                )
-            }
-
-
             /*
             Row (
                 modifier = Modifier.fillMaxWidth()
@@ -108,7 +101,6 @@ fun LoginPage(modifier: Modifier = Modifier, navController: NavController, authV
             ) {
                 //Text(text = "Login Page", fontSize = 32.sp)
             }
-             */
 
             Row (
                 modifier = Modifier.fillMaxWidth()
@@ -119,7 +111,9 @@ fun LoginPage(modifier: Modifier = Modifier, navController: NavController, authV
                 Text(text = "Login Page", fontSize = 24.sp)
             }
 
-            Spacer(modifier = Modifier.height(40.dp))
+             */
+
+            Spacer(modifier = Modifier.height(50.dp))
 
             OutlinedTextField(
                 modifier = Modifier
@@ -174,6 +168,8 @@ fun LoginPage(modifier: Modifier = Modifier, navController: NavController, authV
                     )
                 )
             }
+
         }
+
     }
 }
