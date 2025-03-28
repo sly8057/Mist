@@ -13,7 +13,7 @@ import com.example.mist.R
 
 // Degradados
 val colorStopsGradient = arrayOf(0.0f to HunterGreen, 0.75f to Night)
-val mainColorGradient = listOf(ForestGreen, HunterGreen, DarkGreen, EeireBlack)
+val mainColorGradient = listOf(ForestGreen, HunterGreen, DarkGreen, EerieBlack)
 
 val backgroundColor = Brush.verticalGradient(colorStops = colorStopsGradient)
 

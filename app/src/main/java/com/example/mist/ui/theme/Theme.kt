@@ -1,6 +1,5 @@
 package com.example.mist.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -16,7 +15,7 @@ private val DarkColorScheme = darkColorScheme(
     secondary = Asparagus,
     tertiary = HunterGreen,
     onBackground = DutchWhite,
-    background = EeireBlack,
+    background = EerieBlack,
     onSurface = DarkGreen
 )
 
@@ -25,7 +24,7 @@ private val LightColorScheme = lightColorScheme(
     secondary = Asparagus,
     tertiary = HunterGreen,
     onBackground = DutchWhite,
-    background = EeireBlack,
+    background = EerieBlack,
     onSurface = DarkGreen
 
     /* Other default colors to override

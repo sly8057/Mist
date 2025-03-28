@@ -16,9 +16,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.outlined.Lock
 //import androidx.compose.material.icons.outlined.LockOpen
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -26,7 +23,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldDefaults
@@ -42,9 +38,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TileMode
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -96,7 +90,7 @@ fun LoginPage(modifier: Modifier = Modifier, navController: NavController, authV
         Column(modifier =  Modifier
             .fillMaxSize()
             .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
-            .background(EeireBlack),
+            .background(EerieBlack),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top,
         ) {
@@ -201,7 +195,7 @@ fun LoginPage(modifier: Modifier = Modifier, navController: NavController, authV
 
             Spacer(modifier = Modifier.height(50.dp))
 
-            TextButton(onClick = { }) {
+            TextButton(onClick = { navController.navigate("signup") }) {
                 Text(text = "No tienes cuenta? Registrate",
                     style = TextStyle(
                         fontSize = 15.sp,
