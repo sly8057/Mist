@@ -79,8 +79,11 @@ fun SignupPage(
                 unfocusedTextColor = DutchWhite.copy(alpha = 0.5f)
             ),
             value = email,
-            onValueChange = { email = it },
-            label = { Text(text = "Correo electrónico") }
+            onValueChange = { newText ->
+                val filteredText = newText.filter{ it != ' ' && it != '\n' && it != '\t' }
+                email = filteredText },
+            label = { Text(text = "Correo electrónico") },
+            singleLine = true
         )
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -114,7 +117,7 @@ fun SignupPage(
                 val filteredText = newText.filter{ it != ' ' && it != '\n' && it != '\t' }
                 password = filteredText },
             label = { Text(text = "Contraseña") },
-
+            singleLine = true
         )
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -150,6 +153,7 @@ fun SignupPage(
                 val filteredText = newText.filter{ it != ' ' && it != '\n' && it != '\t' }
                 passwordConfirmation = filteredText },
             label = { Text(text = "Confirma la contraseña") },
+            singleLine = true
         )
 
         Row(
