@@ -71,7 +71,7 @@ fun LoginPage(modifier: Modifier = Modifier, navController: NavController, authV
 
     Column(modifier = Modifier
         .fillMaxSize()
-        .blur(40.dp)
+        //.blur(40.dp)
         .drawWithCache {
             val brushSize = 400f
             val brush = Brush.linearGradient(
@@ -85,7 +85,7 @@ fun LoginPage(modifier: Modifier = Modifier, navController: NavController, authV
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(250.dp))
+        Spacer(modifier = Modifier.height(250.dp).blur(40.dp))
 
         Column(modifier =  Modifier
             .fillMaxSize()
@@ -129,8 +129,11 @@ fun LoginPage(modifier: Modifier = Modifier, navController: NavController, authV
                     unfocusedTextColor = DutchWhite.copy(alpha = 0.5f)
                 ),
                 value = email,
-                onValueChange = { email = it },
-                label = { Text(text = "Correo electrónico") }
+                onValueChange = { newText ->
+                    val filteredText = newText.filter{ it != ' ' && it != '\n' && it != '\t' }
+                    email = filteredText },
+                label = { Text(text = "Correo electrónico") },
+                singleLine = true
             )
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -157,8 +160,11 @@ fun LoginPage(modifier: Modifier = Modifier, navController: NavController, authV
                     )}
                 },
                 value = password,
-                onValueChange = { password = it },
-                label = { Text(text = "Contraseña") }
+                onValueChange = { newText ->
+                    val filteredText = newText.filter{ it != ' ' && it != '\n' && it != '\t' }
+                    password = filteredText },
+                label = { Text(text = "Contraseña") },
+                singleLine = true
             )
 
             Spacer(modifier = Modifier.height(4.dp))

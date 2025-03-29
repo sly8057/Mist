@@ -1,5 +1,6 @@
 package com.example.mist.pages
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -30,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -56,6 +58,7 @@ fun SignupPage(
     var passwordConfirmationVisible by remember { mutableStateOf(false) }
 
     var isChecked by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -107,8 +110,11 @@ fun SignupPage(
                 }
             },
             value = password,
-            onValueChange = { password = it },
-            label = { Text(text = "Contraseña") }
+            onValueChange = { newText ->
+                val filteredText = newText.filter{ it != ' ' && it != '\n' && it != '\t' }
+                password = filteredText },
+            label = { Text(text = "Contraseña") },
+
         )
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -140,8 +146,10 @@ fun SignupPage(
                 }
             },
             value = passwordConfirmation,
-            onValueChange = { passwordConfirmation = it },
-            label = { Text(text = "Confirma la contraseña") }
+            onValueChange = { newText ->
+                val filteredText = newText.filter{ it != ' ' && it != '\n' && it != '\t' }
+                passwordConfirmation = filteredText },
+            label = { Text(text = "Confirma la contraseña") },
         )
 
         Row(
@@ -211,4 +219,8 @@ fun SignupPage(
         }
 
     }
+}
+
+fun isValidPassword(password: String): Boolean{
+    return !password.contains(Regex("\\s"))
 }
