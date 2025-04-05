@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.mist.pages.HomePage
 import com.example.mist.pages.LoginPage
+import com.example.mist.pages.QuizPage
 import com.example.mist.pages.SignupPage
 import com.example.mist.pages.StartPage
 
@@ -26,6 +27,9 @@ fun MyAppNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel)
         }
         composable("home") {
             HomePage(modifier = modifier, navController = navController, authViewModel = authViewModel)
+        }
+        composable("quiz"){
+            QuizPage(/*modifier = modifier, navController = navController, authViewModel = authViewModel*/)
         }
     })
 }
