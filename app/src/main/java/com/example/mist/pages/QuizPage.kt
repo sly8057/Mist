@@ -1,6 +1,7 @@
 package com.example.mist.pages
 
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -23,7 +24,9 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,6 +34,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -70,6 +74,8 @@ fun QuizPage(/*modifier: Modifier = Modifier, navController: NavController, auth
 
     var currentQuestionIndex by remember { mutableIntStateOf(0) }
     var selectedOption by remember { mutableIntStateOf(-1) }
+    var scores by remember { mutableStateOf(mutableMapOf<String, Int>()) }
+    val selectedOptions = remember { mutableStateMapOf<Int, Int>()}
 
     val currentQuestion = questions[currentQuestionIndex]
 
@@ -121,10 +127,11 @@ fun QuizPage(/*modifier: Modifier = Modifier, navController: NavController, auth
             Spacer(modifier = Modifier.height(28.dp))
 
             currentQuestion.options.forEachIndexed{ index, option ->
-                Card(
+                OutlinedCard(
                     colors = CardDefaults.cardColors(
                         containerColor = DutchWhite
                     ),
+                    border = BorderStroke(2.dp, Asparagus),
                     modifier = Modifier.
                         padding(horizontal=25.dp,).
                         fillMaxWidth().
@@ -142,7 +149,8 @@ fun QuizPage(/*modifier: Modifier = Modifier, navController: NavController, auth
                     ){
                         RadioButton(
                             selected = selectedOption == index,
-                            onClick = { selectedOption = index},
+                            onClick = { selectedOption = index
+                                      println(selectedOption)},
                         )
                         Text(text = option, modifier = Modifier.padding(0.dp),
                             style = TextStyle(
@@ -157,14 +165,69 @@ fun QuizPage(/*modifier: Modifier = Modifier, navController: NavController, auth
                 Spacer(modifier = Modifier.height(30.dp))
             }
 
-            Button(
-                onClick = {
+            Row{
+                Button(
+                    onClick = {
+                        if(currentQuestionIndex > 0){
+                            selectedOptions[currentQuestionIndex-1]?.let {
+                                val previousCategory = categories[it]
+                                scores[previousCategory] = (scores[previousCategory] ?: 1) - 1
+                            }
+                            currentQuestionIndex--
+                            selectedOption = selectedOptions[currentQuestionIndex] ?: -1
 
-                },
-                colors = ButtonDefaults.buttonColors(containerColor = ForestGreen),
-                modifier = Modifier.size(30.dp)
-            ){
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = ForestGreen),
+                    modifier = Modifier
+                        .padding(start = 25.dp)
+                        .height(50.dp)
+                        .width(80.dp),
+                    shape = RoundedCornerShape(10.dp)
+                ){
+                    Icon(painter = painterResource(id=R.drawable.backward_step),
+                        contentDescription = null)
+                }
 
+                Button(
+                    onClick = {
+                        if(selectedOption != -1){
+                            val category = categories[selectedOption]
+                            val wasAlreadyAnswered = selectedOptions.containsKey(currentQuestionIndex)
+
+
+                            scores[category] = scores.getOrDefault(category,0) + 1
+
+
+                            selectedOptions[currentQuestionIndex] = selectedOption
+
+                            if(currentQuestionIndex < questions.lastIndex){
+                                currentQuestionIndex++
+                                selectedOption = selectedOptions[currentQuestionIndex] ?: -1
+                            }
+                            else{
+                                println("Puntaje: $scores")
+                                //overlay
+                            }
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = ForestGreen),
+                    modifier = Modifier
+                        .padding(start = 10.dp, end = 25.dp)
+                        .height(50.dp)
+                        .width(175.dp),
+                    shape = RoundedCornerShape(10.dp)
+                ){
+                    Text(text="Siguiente",
+                        modifier = Modifier
+                            .padding(end=10.dp),
+                        style = TextStyle(
+                            fontFamily= FontFamily(Font(R.font.relay_jetbrains_mono_bold))
+                        )
+                    )
+                    Icon(painter = painterResource(id=R.drawable.forward_step),
+                        contentDescription = null)
+                }
             }
 
         }
@@ -176,6 +239,13 @@ fun QuizPage(/*modifier: Modifier = Modifier, navController: NavController, auth
 
 data class Question(val text: String,
     val options: List<String>)
+
+val categories = listOf(
+    "Deportes",
+    "ArtesVisuales",
+    "Entretenimiento",
+    "ArtesLiterarias",
+    "Miscelaneo")
 
 val questions = listOf(
     Question(
@@ -189,12 +259,42 @@ val questions = listOf(
         )
     ),
     Question(
-        "¿¿Qué tipo de contenido te interesa más en redes sociales o internet?",
+        "¿Qué tipo de contenido te interesa más en redes sociales o internet?",
         listOf(
             "Videos de deportes, rutinas de entrenamiento o competencias.",
             "Ilustraciones digitales, tutoriales de dibujo o arte visual.",
             "Streams de videojuegos, análisis de películas o juegos de mesa.",
             "Citas de libros, análisis literarios o técnicas de escritura.",
+            "No quiero una categoría fija, prefiero ejercicios aleatorios."
+        )
+    ),
+    Question(
+        "¿Si pudieras dedicarte a una de estas actividades, cuál elegirías?",
+        listOf(
+            "Ser atleta, entrenador o profesional en deportes.",
+            "Ser artista visual, diseñador gráfico o ilustrador.",
+            "Ser creador de videojuegos, crítico de cine o desarrollador de entretenimiento.",
+            "Ser escritor, editor o periodista.",
+            "No quiero una categoría fija, prefiero ejercicios aleatorios."
+        )
+    ),
+    Question(
+        "¿Cuál de estas frases te representa mejor?",
+        listOf(
+            "Me encanta el movimiento, la competencia y la actividad física.",
+            "Expreso mis ideas a través del arte visual.",
+            "Me encanta sumergirme en mundos de fantasía y entretenimiento.",
+            "Las palabras y las historias son mi pasión.",
+            "No quiero una categoría fija, prefiero ejercicios aleatorios."
+        )
+    ),
+    Question(
+        "¿Cómo prefieres aprender algo nuevo?",
+        listOf(
+            "Con experiencias prácticas y en movimiento.",
+            "A través de la observación y la creatividad.",
+            "Jugando, experimentando o interactuando con tecnología.",
+            "Leyendo, escribiendo o analizando textos.",
             "No quiero una categoría fija, prefiero ejercicios aleatorios."
         )
     ),
