@@ -29,7 +29,7 @@ fun MyAppNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel)
             HomePage(modifier = modifier, navController = navController, authViewModel = authViewModel)
         }
         composable("quiz"){
-            QuizPage(/*modifier = modifier, navController = navController, authViewModel = authViewModel*/)
+            QuizPage(modifier = modifier, navController = navController/*, authViewModel = authViewModel*/)
         }
     })
 }

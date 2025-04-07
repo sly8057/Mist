@@ -1,14 +1,10 @@
 package com.example.mist.pages
 
-import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,23 +12,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconToggleButton
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -42,26 +34,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.mist.AuthViewModel
-import com.example.mist.AuthState
 import com.example.mist.R
 import com.example.mist.ui.theme.*
 
 @Composable
-fun QuizPage(/*modifier: Modifier = Modifier, navController: NavController, authViewModel: AuthViewModel*/){
+fun QuizPage(modifier: Modifier = Modifier, navController: NavController, /*authViewModel: AuthViewModel*/){
     /*val authState = authViewModel.authState.observeAsState()
     val context = LocalContext.current
 
@@ -78,6 +65,9 @@ fun QuizPage(/*modifier: Modifier = Modifier, navController: NavController, auth
     val selectedOptions = remember { mutableStateMapOf<Int, Int>()}
 
     val currentQuestion = questions[currentQuestionIndex]
+    var progress = (currentQuestionIndex + 1).toFloat() / questions.size
+    var showDialog by remember { mutableStateOf(false) }
+    if(showDialog) com.example.mist.popup.QuizPopUp (onDismiss = { showDialog = false }, scores, navController)
 
     Column(modifier = Modifier
         .fillMaxSize()
@@ -95,7 +85,7 @@ fun QuizPage(/*modifier: Modifier = Modifier, navController: NavController, auth
             .height(580.dp),
             //verticalArrangement = Arrangement.SpaceBetween
             ){
-
+            //TopBarWithProgress(progress = progress)
             Text(
                 text = "${currentQuestionIndex + 1}. ${currentQuestion.text}",
                 //color = DutchWhite,
@@ -169,13 +159,9 @@ fun QuizPage(/*modifier: Modifier = Modifier, navController: NavController, auth
                 Button(
                     onClick = {
                         if(currentQuestionIndex > 0){
-                            selectedOptions[currentQuestionIndex-1]?.let {
-                                val previousCategory = categories[it]
-                                scores[previousCategory] = (scores[previousCategory] ?: 1) - 1
-                            }
                             currentQuestionIndex--
                             selectedOption = selectedOptions[currentQuestionIndex] ?: -1
-
+                            println(scores)
                         }
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = ForestGreen),
@@ -193,21 +179,31 @@ fun QuizPage(/*modifier: Modifier = Modifier, navController: NavController, auth
                     onClick = {
                         if(selectedOption != -1){
                             val category = categories[selectedOption]
-                            val wasAlreadyAnswered = selectedOptions.containsKey(currentQuestionIndex)
 
+                            val previousSelection = selectedOptions[currentQuestionIndex]
 
-                            scores[category] = scores.getOrDefault(category,0) + 1
+                            if(previousSelection != selectedOption){
+                                previousSelection?.let { oldSelection ->
+                                    val oldCategory = categories[oldSelection]
+                                    scores[oldCategory] = (scores[oldCategory] ?: 0) - 1
+                                }
+                            }
 
+                            if(previousSelection != null && previousSelection == selectedOption){
 
+                            }else{
+                                scores[category] = (scores[category] ?: 0) + 1
+                            }
                             selectedOptions[currentQuestionIndex] = selectedOption
 
                             if(currentQuestionIndex < questions.lastIndex){
                                 currentQuestionIndex++
                                 selectedOption = selectedOptions[currentQuestionIndex] ?: -1
+                                println(scores)
                             }
                             else{
                                 println("Puntaje: $scores")
-                                //overlay
+                                //showDialog = true
                             }
                         }
                     },
@@ -233,8 +229,41 @@ fun QuizPage(/*modifier: Modifier = Modifier, navController: NavController, auth
         }
 
     }
-
     
+}
+
+@Composable
+fun TopBarWithProgress(progress: Float) {
+    Column {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            /*IconButton(onClick = { /* Acción de retroceso */ }) {
+                Icon(
+                    painter = painterResource(id = android.R.drawable.ic_media_previous),
+                    contentDescription = "Atrás",
+                    tint = Color.White
+                )
+            }*/
+            Text("QUIZ", color = DutchWhite, fontWeight = FontWeight.Bold)
+            Icon(
+                painter = painterResource(id = R.drawable.rocket),
+                contentDescription = "Icono",
+                tint = DutchWhite
+            )
+        }
+        LinearProgressIndicator(
+            progress = { progress },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(4.dp)
+                .padding(top = 8.dp),
+            color = Asparagus,
+            trackColor = HunterGreen,
+        )
+    }
 }
 
 data class Question(val text: String,
@@ -242,9 +271,9 @@ data class Question(val text: String,
 
 val categories = listOf(
     "Deportes",
-    "ArtesVisuales",
+    "Artes Visuales",
     "Entretenimiento",
-    "ArtesLiterarias",
+    "Artes Literarias",
     "Miscelaneo")
 
 val questions = listOf(
@@ -301,8 +330,8 @@ val questions = listOf(
 
 )
 
-@Preview
+/*@Preview
 @Composable
 fun QuizPreview(){
     QuizPage()
-}
+}*/
