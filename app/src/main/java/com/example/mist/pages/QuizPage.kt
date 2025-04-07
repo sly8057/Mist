@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -76,7 +77,19 @@ fun QuizPage(modifier: Modifier = Modifier, navController: NavController, /*auth
         verticalArrangement = Arrangement.spacedBy(30.dp, Alignment.Top),
         horizontalAlignment = Alignment.CenterHorizontally,){
 
-        Spacer(modifier = Modifier.height(36.dp))
+        Spacer(modifier = Modifier
+            .height(20.dp)
+            .background(EerieBlack)
+            )
+
+        Column(modifier = Modifier) {
+
+            TopBarWithProgress(
+                progress = progress,
+                modifier = Modifier.padding(top = 16.dp)
+            )
+        }
+        Spacer(modifier = Modifier.height(20.dp))
 
         Column(modifier = Modifier
             .clip(shape = RoundedCornerShape(10.dp))
@@ -233,37 +246,35 @@ fun QuizPage(modifier: Modifier = Modifier, navController: NavController, /*auth
 }
 
 @Composable
-fun TopBarWithProgress(progress: Float) {
-    Column {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            /*IconButton(onClick = { /* Acción de retroceso */ }) {
-                Icon(
-                    painter = painterResource(id = android.R.drawable.ic_media_previous),
-                    contentDescription = "Atrás",
-                    tint = Color.White
-                )
-            }*/
-            Text("QUIZ", color = DutchWhite, fontWeight = FontWeight.Bold)
-            Icon(
-                painter = painterResource(id = R.drawable.rocket),
-                contentDescription = "Icono",
-                tint = DutchWhite
-            )
-        }
+fun TopBarWithProgress(progress: Float, modifier: Modifier = Modifier) {
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+    ) {
+        Text(
+            text = "${(progress * questions.size).toInt()}/${questions.size}",
+            style = TextStyle(
+                fontSize = 14.sp,
+                fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_bold)),
+                color = DutchWhite,
+            ),
+            modifier = Modifier.align(Alignment.End)
+        )
+
         LinearProgressIndicator(
             progress = { progress },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(4.dp)
-                .padding(top = 8.dp),
-            color = Asparagus,
-            trackColor = HunterGreen,
+                .height(8.dp)
+                .clip(RoundedCornerShape(4.dp)),
+            color = DutchWhite,
+            trackColor = DutchWhite.copy(alpha = 0.5f)
         )
+        Spacer(Modifier.height(20.dp))
     }
+
 }
 
 data class Question(val text: String,
