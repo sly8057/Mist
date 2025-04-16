@@ -1,49 +1,37 @@
 package com.example.mist.pages
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.asComposePath
 import androidx.compose.ui.graphics.drawscope.rotate
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -51,13 +39,12 @@ import androidx.graphics.shapes.CornerRounding
 import androidx.graphics.shapes.RoundedPolygon
 import androidx.graphics.shapes.toPath
 import androidx.navigation.NavController
-import com.example.mist.AuthState
 import com.example.mist.AuthViewModel
 import com.example.mist.R
 import com.example.mist.ui.theme.DutchWhite
 import com.example.mist.ui.theme.EerieBlack
+import com.example.mist.ui.theme.ForestGreen
 import com.example.mist.ui.theme.backgroundColor
-import com.example.mist.ui.theme.mainColorGradient
 
 @Composable
 fun HomePage(
@@ -99,18 +86,17 @@ fun HomePage(
                 )
                 .padding(
                     start = 30.dp,
-                    end = 20.dp,
-                    top = 50.dp,
+                    end = 30.dp,
+                    top = 55.dp,
                     bottom = 20.dp
                 ),
-            verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.Start
         ) {
             Text(
                 text = "Hola, Whispersoul!" + "👋",
                 style = TextStyle(
                     fontSize = 24.sp,
-                    fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_regular)),
+                    fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_bold)),
                     color = DutchWhite
                 )
             )
@@ -121,7 +107,7 @@ fun HomePage(
                 text = "Progreso de aprendizaje:",
                 style = TextStyle(
                     fontSize = 12.sp,
-                    fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_medium)),
+                    fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_semibold_italic)),
                     color = DutchWhite
                 )
             )
@@ -129,7 +115,7 @@ fun HomePage(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(24.dp)
+                    .height(30.dp)
             ) {
                 LinearProgressIndicator(
                     progress = { progress },
@@ -143,18 +129,13 @@ fun HomePage(
                 )
 
                 Icon(
-                    imageVector = Icons.Default.Star,
-                    // painter = painterResource(id = R.drawable.rocket),
+                    painter = painterResource(id = R.drawable.ic_rocket),
                     contentDescription = "Progress Indicator",
+                    tint = ForestGreen,
                     modifier = Modifier
-                        .size(24.dp)
+                        .fillMaxHeight()
                         .align(Alignment.CenterStart)
-                        .offset(
-                            x = (
-                                    progress * LocalDensity.current.run {
-                                        (LocalConfiguration.current.screenWidthDp.dp.toPx())
-                                    }).dp
-                        )
+                        .offset(x = progress.dp * 320)
                 )
             }
 
@@ -167,7 +148,7 @@ fun HomePage(
                     text = "Nivel actual: 3",
                     style = TextStyle(
                         fontSize = 10.sp,
-                        fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_italic)),
+                        fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_extrabold_italic)),
                         color = DutchWhite
                     )
                 )
@@ -176,7 +157,7 @@ fun HomePage(
                     text = "80 / 150 XP",
                     style = TextStyle(
                         fontSize = 10.sp,
-                        fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_italic)),
+                        fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_extrabold_italic)),
                         color = DutchWhite
                     )
                 )
@@ -187,8 +168,8 @@ fun HomePage(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
-                    start = 20.dp,
-                    end = 20.dp,
+                    start = 50.dp,
+                    end = 50.dp,
                     top = 80.dp,
                     bottom = 20.dp
                 ),
@@ -196,32 +177,32 @@ fun HomePage(
             verticalArrangement = Arrangement.Top,
         ) {
             Lesson(
-                icon = R.drawable.flag_solid,
+                icon = R.drawable.ic_flag_solid,
                 description = "Icono de Leccion",
                 title = "Conceptos Basicos",
                 multiple = false
             )
             Lesson(
-                icon = R.drawable.java,
+                icon = R.drawable.ic_java,
                 description = "Icono de Java",
                 title = "Java SE",
                 multiple = true,
-                icon2 = R.drawable.database_solid,
+                icon2 = R.drawable.ic_database,
                 description2 = "Icono de Base de Datos",
                 title2 = "Bases de Datos",
             )
             Lesson(
-                icon = R.drawable.git,
+                icon = R.drawable.ic_git,
                 description = "Icono de Git",
                 title = "Sistemas de Versionamiento",
                 multiple = false
             )
             Lesson(
-                icon = R.drawable.android,
+                icon = R.drawable.ic_android,
                 description = "Icono de Android",
                 title = "Android Studio",
                 multiple = true,
-                icon2 = R.drawable.ios,
+                icon2 = R.drawable.ic_ios,
                 description2 = "Icono de iOS",
                 title2 = "iOS (Swift)",
             )
@@ -235,14 +216,7 @@ fun HomePage(
 @Composable
 fun LessonsInRow(i1: Int, i2: Int, d1: String, d2: String, t1: String, t2: String) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(
-                start = 34.dp,
-                end = 34.dp,
-                top = 0.dp,
-                bottom = 0.dp
-            ),
+        modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Box(
@@ -250,11 +224,11 @@ fun LessonsInRow(i1: Int, i2: Int, d1: String, d2: String, t1: String, t2: Strin
                 .drawWithCache {
                     val roundedPolygon = RoundedPolygon(
                         numVertices = 6,
-                        radius = size.minDimension,
+                        radius = size.minDimension / 1.1f,
                         centerX = size.width / 2,
                         centerY = size.height / 2,
                         rounding = CornerRounding(
-                            size.minDimension / 5f,
+                            radius = size.minDimension / 5f,
                             smoothing = 0.1f
                         )
                     )
@@ -272,11 +246,11 @@ fun LessonsInRow(i1: Int, i2: Int, d1: String, d2: String, t1: String, t2: Strin
                     .drawWithCache {
                         val roundedPolygon = RoundedPolygon(
                             numVertices = 6,
-                            radius = size.minDimension / 1.2f,
+                            radius = size.minDimension / 1.3f,
                             centerX = size.width / 2,
                             centerY = size.height / 2,
                             rounding = CornerRounding(
-                                size.minDimension / 5f,
+                                radius = size.minDimension / 5f,
                                 smoothing = 0.1f
                             )
                         )
@@ -300,20 +274,20 @@ fun LessonsInRow(i1: Int, i2: Int, d1: String, d2: String, t1: String, t2: Strin
                 Icon(
                     painter = painterResource(id = i1),
                     contentDescription = d1,
-                    modifier = Modifier
-                        .size(35.dp)
+                    modifier = Modifier.size(35.dp)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = t1,
                     overflow = TextOverflow.Ellipsis,
+                    maxLines = 2,
                     style = TextStyle(
-                        fontSize = 12.sp,
-                        fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_regular)),
+                        fontSize = 14.sp,
+                        fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_semibold)),
+                        textAlign = TextAlign.Center,
                         color = DutchWhite
                     ),
-                    modifier = Modifier
-                        .width(IntrinsicSize.Min)
+                    modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Max),
                 )
             }
         }
@@ -323,11 +297,11 @@ fun LessonsInRow(i1: Int, i2: Int, d1: String, d2: String, t1: String, t2: Strin
                 .drawWithCache {
                     val roundedPolygon = RoundedPolygon(
                         numVertices = 6,
-                        radius = size.minDimension,
+                        radius = size.minDimension / 1.1f,
                         centerX = size.width / 2,
                         centerY = size.height / 2,
                         rounding = CornerRounding(
-                            size.minDimension / 5f,
+                            radius = size.minDimension / 5f,
                             smoothing = 0.1f
                         )
                     )
@@ -345,11 +319,11 @@ fun LessonsInRow(i1: Int, i2: Int, d1: String, d2: String, t1: String, t2: Strin
                     .drawWithCache {
                         val roundedPolygon = RoundedPolygon(
                             numVertices = 6,
-                            radius = size.minDimension / 1.2f,
+                            radius = size.minDimension / 1.3f,
                             centerX = size.width / 2,
                             centerY = size.height / 2,
                             rounding = CornerRounding(
-                                size.minDimension / 5f,
+                                radius = size.minDimension / 5f,
                                 smoothing = 0.1f
                             )
                         )
@@ -360,33 +334,27 @@ fun LessonsInRow(i1: Int, i2: Int, d1: String, d2: String, t1: String, t2: Strin
                             }
                         }
                     }
-                    .fillMaxSize()
-                    .padding(
-                        start = 0.dp,
-                        end = 0.dp,
-                        top = 10.dp,
-                        bottom = 10.dp
-                    ),
+                    .fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ) {
                 Icon(
                     painter = painterResource(id = i2),
                     contentDescription = d2,
-                    modifier = Modifier
-                        .size(35.dp)
+                    modifier = Modifier.size(35.dp)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = t2,
                     overflow = TextOverflow.Ellipsis,
+                    maxLines = 2,
                     style = TextStyle(
-                        fontSize = 12.sp,
-                        fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_regular)),
+                        fontSize = 14.sp,
+                        fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_semibold)),
+                        textAlign = TextAlign.Center,
                         color = DutchWhite
                     ),
-                    modifier = Modifier
-                        .width(IntrinsicSize.Min)
+                    modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Max)
                 )
             }
         }
@@ -403,11 +371,11 @@ fun Lesson(icon: Int, description: String, title: String, multiple: Boolean = fa
                 .drawWithCache {
                     val roundedPolygon = RoundedPolygon(
                         numVertices = 6,
-                        radius = size.minDimension,
+                        radius = size.minDimension / 1.1f,
                         centerX = size.width / 2,
                         centerY = size.height / 2,
                         rounding = CornerRounding(
-                            size.minDimension / 5f,
+                            radius = size.minDimension / 5f,
                             smoothing = 0.1f
                         )
                     )
@@ -425,11 +393,11 @@ fun Lesson(icon: Int, description: String, title: String, multiple: Boolean = fa
                     .drawWithCache {
                         val roundedPolygon = RoundedPolygon(
                             numVertices = 6,
-                            radius = size.minDimension / 1.2f,
+                            radius = size.minDimension / 1.3f,
                             centerX = size.width / 2,
                             centerY = size.height / 2,
                             rounding = CornerRounding(
-                                size.minDimension / 5f,
+                                radius = size.minDimension / 5f,
                                 smoothing = 0.1f
                             )
                         )
@@ -453,23 +421,23 @@ fun Lesson(icon: Int, description: String, title: String, multiple: Boolean = fa
                 Icon(
                     painter = painterResource(id = icon),
                     contentDescription = description,
-                    modifier = Modifier
-                        .size(35.dp)
+                    modifier = Modifier.size(35.dp)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = title,
                     overflow = TextOverflow.Ellipsis,
+                    maxLines = 2,
                     style = TextStyle(
-                        fontSize = 12.sp,
-                        fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_regular)),
+                        fontSize = 14.sp,
+                        fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_semibold)),
+                        textAlign = TextAlign.Center,
                         color = DutchWhite
                     ),
-                    modifier = Modifier
-                        .width(IntrinsicSize.Min)
+                    modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Max),
                 )
             }
         }
 
-    Spacer(modifier = Modifier.height(90.dp))
+    Spacer(modifier = Modifier.height(60.dp))
 }

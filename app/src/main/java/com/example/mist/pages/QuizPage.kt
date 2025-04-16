@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -19,7 +18,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.RadioButton
@@ -39,9 +37,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -184,7 +180,7 @@ fun QuizPage(modifier: Modifier = Modifier, navController: NavController, /*auth
                         .width(80.dp),
                     shape = RoundedCornerShape(10.dp)
                 ){
-                    Icon(painter = painterResource(id=R.drawable.backward_step),
+                    Icon(painter = painterResource(id=R.drawable.ic_backward_step),
                         contentDescription = null)
                 }
 
@@ -234,7 +230,7 @@ fun QuizPage(modifier: Modifier = Modifier, navController: NavController, /*auth
                             fontFamily= FontFamily(Font(R.font.relay_jetbrains_mono_bold))
                         )
                     )
-                    Icon(painter = painterResource(id=R.drawable.forward_step),
+                    Icon(painter = painterResource(id=R.drawable.ic_forward_step),
                         contentDescription = null)
                 }
             }
