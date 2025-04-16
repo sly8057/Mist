@@ -68,7 +68,7 @@ fun QuizPopUp(
                     Icon(imageVector = Icons.Default.Info, contentDescription = null)
                     Spacer(Modifier.width(10.dp))
                     Text(
-                        text = "Elige tu afición",
+                        text = "Oooops!",
                         style = TextStyle(fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_bold))),
                         fontSize = 20.sp,
                     )
@@ -95,7 +95,10 @@ fun QuizPopUp(
                     verticalArrangement = Arrangement.Center
                 ) {
 
-                    Text(text = winnerCategories.keys.elementAt(0))
+                    Text(text = "Pareces ser multifacético. Elige una aficion:",
+                        style = TextStyle(fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_regular))),
+                        fontSize = 15.sp
+                    )
                     Spacer(Modifier.height(20.dp))
 
                     Column (modifier = Modifier.fillMaxSize(),

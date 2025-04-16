@@ -216,7 +216,7 @@ fun QuizPage(modifier: Modifier = Modifier, navController: NavController, /*auth
                             }
                             else{
                                 println("Puntaje: $scores")
-                                //showDialog = true
+                                showDialog = true
                             }
                         }
                     },

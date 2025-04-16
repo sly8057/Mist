@@ -15,7 +15,7 @@ import com.example.mist.pages.StartPage
 fun MyAppNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel) {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = "quiz", builder = {
+    NavHost(navController = navController, startDestination = "home", builder = {
         composable("start") {
             StartPage(modifier, navController, authViewModel)
         }
