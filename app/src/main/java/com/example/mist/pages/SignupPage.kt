@@ -12,17 +12,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -37,14 +30,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.mist.AuthState
 import com.example.mist.AuthViewModel
 import com.example.mist.R
+import com.example.mist.components.PrimaryButton
+import com.example.mist.components.PrimaryInputField
+import com.example.mist.components.SecondaryTextButton
 import com.example.mist.ui.theme.*
 
 @Composable
@@ -77,7 +71,6 @@ fun SignupPage(
         }
     }
 
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -86,92 +79,41 @@ fun SignupPage(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        OutlinedTextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp),
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = Night.copy(alpha = 0.1f),
-                unfocusedContainerColor = Night.copy(alpha = 0.1f),
-                focusedTextColor = DutchWhite,
-                unfocusedTextColor = DutchWhite.copy(alpha = 0.5f)
-            ),
+        PrimaryInputField(
             value = email,
-            onValueChange = { newText ->
-                val filteredText = newText.filter{ it != ' ' && it != '\n' && it != '\t' }
-                email = filteredText },
-            label = { Text(text = "Correo electrónico") },
-            singleLine = true
+            onValueChange = { email = it },
+            label = "Correo electrónico",
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp)
         )
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        OutlinedTextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp),
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = Night.copy(alpha = 0.1f),
-                unfocusedContainerColor = Night.copy(alpha = 0.1f),
-                focusedTextColor = DutchWhite,
-                unfocusedTextColor = DutchWhite.copy(alpha = 0.5f)
-            ),
-            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            trailingIcon = {
-                val icon =
-                    if (passwordVisible) getImageVectorFromDrawable(R.drawable.ic_lock) else getImageVectorFromDrawable(
-                        R.drawable.ic_lock_open
-                    )
-                IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = if (passwordVisible) "Contraseña visible" else "Contraseña oculta",
-                        tint = DutchWhite.copy(alpha = 0.5f)
-                    )
-                }
-            },
+        PrimaryInputField(
             value = password,
-            onValueChange = { newText ->
-                val filteredText = newText.filter{ it != ' ' && it != '\n' && it != '\t' }
-                password = filteredText },
-            label = { Text(text = "Contraseña") },
-            singleLine = true
+            onValueChange = { password = it },
+            label = "Contraseña",
+            isPasswordField = true,
+            passwordVisible = passwordVisible,
+            onVisibilityToggle = { passwordVisible = !passwordVisible },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp)
         )
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        OutlinedTextField(
+        PrimaryInputField(
+            value = passwordConfirmation,
+            onValueChange = { passwordConfirmation = it },
+            label = "Confirma la contraseña",
+            isPasswordField = true,
+            passwordVisible = passwordConfirmationVisible,
+            onVisibilityToggle = { passwordConfirmationVisible = !passwordConfirmationVisible },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp),
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = Night.copy(alpha = 0.1f),
-                unfocusedContainerColor = Night.copy(alpha = 0.1f),
-                focusedTextColor = DutchWhite,
-                unfocusedTextColor = DutchWhite.copy(alpha = 0.5f)
-            ),
-            visualTransformation = if (passwordConfirmationVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            trailingIcon = {
-                val icon =
-                    if (passwordConfirmationVisible) getImageVectorFromDrawable(R.drawable.ic_lock) else getImageVectorFromDrawable(
-                        R.drawable.ic_lock_open
-                    )
-                IconButton(onClick = {
-                    passwordConfirmationVisible = !passwordConfirmationVisible
-                }) {
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = if (passwordConfirmationVisible) "Contraseña visible" else "Contraseña oculta",
-                        tint = DutchWhite.copy(alpha = 0.5f)
-                    )
-                }
-            },
-            value = passwordConfirmation,
-            onValueChange = { newText ->
-                val filteredText = newText.filter{ it != ' ' && it != '\n' && it != '\t' }
-                passwordConfirmation = filteredText },
-            label = { Text(text = "Confirma la contraseña") },
-            singleLine = true
+                .padding(horizontal = 20.dp)
         )
 
         Row(
@@ -206,49 +148,22 @@ fun SignupPage(
 
         Spacer(modifier = Modifier.height(30.dp))
 
-        Button(
-            modifier = Modifier
-                .width(170.dp)
-                .height(50.dp),
-            shape = RoundedCornerShape(size = 20.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onBackground
-            ),
+        PrimaryButton(
+            text = "Regístrate",
             onClick = {
                 if(password == passwordConfirmation){
                     authViewModel.signup(email,password)
                 }else{
                     Toast.makeText(context, "La contraseña no coincide", Toast.LENGTH_SHORT).show()
-                }
-            }, enabled = authState.value != AuthState.Loading
-        ) {
-            Text(
-                text = "Regístrate",
-                // MonoText
-                style = TextStyle(
-                    fontSize = 15.sp,
-                    fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_bold)),
-                )
-            )
-        }
+                } },
+            enabled = authState.value != AuthState.Loading
+        )
 
         Spacer(modifier = Modifier.height(50.dp))
 
-        TextButton(onClick = { navController.navigate("login") }) {
-            Text(
-                text = "Ya tienes cuenta? Inicia sesión",
-                style = TextStyle(
-                    fontSize = 15.sp,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_bold))
-                )
-            )
-        }
+        SecondaryTextButton(
+            text = "Ya tienes cuenta? Inicia sesión",
+            onClick = { navController.navigate("login") })
 
     }
-}
-
-fun isValidPassword(password: String): Boolean{
-    return !password.contains(Regex("\\s"))
 }

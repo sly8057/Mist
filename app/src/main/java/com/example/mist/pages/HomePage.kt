@@ -17,8 +17,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,8 +42,12 @@ import androidx.graphics.shapes.CornerRounding
 import androidx.graphics.shapes.RoundedPolygon
 import androidx.graphics.shapes.toPath
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import com.example.mist.AuthState
 import com.example.mist.AuthViewModel
 import com.example.mist.R
+import com.example.mist.components.CustomBottomBar
+import com.example.mist.components.DefaultTopBar
 import com.example.mist.ui.theme.DutchWhite
 import com.example.mist.ui.theme.EerieBlack
 import com.example.mist.ui.theme.ForestGreen
@@ -49,20 +56,43 @@ import com.example.mist.ui.theme.backgroundColor
 @Composable
 fun HomePage(
     modifier: Modifier = Modifier,
-    navController: NavController,
+    navController: NavHostController,
     authViewModel: AuthViewModel
 ) {
     val progress = 50f / 100f
 
-    /*val authState = authViewModel.authState.observeAsState()
+    val authState = authViewModel.authState.observeAsState()
 
     LaunchedEffect(authState.value) {
         when(authState.value) {
             is AuthState.Unauthenticated -> navController.navigate("start")
             else -> Unit
         }
-    }*/
+    }
 
+    Scaffold(
+        //contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal),
+        modifier = Modifier.padding(bottom = 40.dp),
+        bottomBar = { CustomBottomBar(navController) },
+    ) { innerPadding ->
+        HomeContent(
+            progress = progress,
+            modifier = modifier.padding(innerPadding),
+            navController = navController,
+            authViewModel = authViewModel
+        )
+    }
+
+}
+
+@Composable
+fun HomeContent(
+    progress: Float,
+    modifier: Modifier = Modifier,
+    navController: NavHostController,
+    authViewModel: AuthViewModel
+
+){
     Column(
         modifier = Modifier
             .fillMaxSize()

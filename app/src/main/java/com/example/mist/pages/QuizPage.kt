@@ -41,11 +41,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.example.mist.R
 import com.example.mist.ui.theme.*
 
 @Composable
-fun QuizPage(modifier: Modifier = Modifier, navController: NavController, /*authViewModel: AuthViewModel*/){
+fun QuizPage(modifier: Modifier = Modifier, navController: NavHostController, /*authViewModel: AuthViewModel*/){
     /*val authState = authViewModel.authState.observeAsState()
     val context = LocalContext.current
 

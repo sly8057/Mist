@@ -15,6 +15,7 @@ firebaseAuth = "23.2.0"
 firebaseAuthKtx = "23.2.0"
 firebaseCrashlyticsBuildtools = "3.0.3"
 runtimeLivedata = "1.7.8"
+graphicsShapesAndroid = "1.0.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -37,6 +38,7 @@ firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version
 firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx", version.ref = "firebaseAuthKtx" }
 firebase-crashlytics-buildtools = { group = "com.google.firebase", name = "firebase-crashlytics-buildtools", version.ref = "firebaseCrashlyticsBuildtools" }
 androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtimeLivedata" }
+androidx-graphics-shapes-android = { group = "androidx.graphics", name = "graphics-shapes-android", version.ref = "graphicsShapesAndroid" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
