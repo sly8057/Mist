@@ -21,10 +21,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import com.example.mist.ui.theme.DutchWhite
+import com.example.mist.ui.theme.EerieBlack
 import com.example.mist.ui.theme.Night
 import com.example.mist.ui.theme.getImageVectorFromDrawable
 
@@ -163,6 +165,45 @@ fun PrimaryInputField(
             unfocusedContainerColor = Night.copy(alpha = 0.1f),
             focusedTextColor = DutchWhite,
             unfocusedTextColor = DutchWhite.copy(alpha = 0.5f)
+        )
+    )
+}
+
+@Composable
+fun SecondaryInputField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    modifier: Modifier = Modifier,
+    trailingIcon: Int,
+    singleLine: Boolean = true
+) {
+    OutlinedTextField(
+        modifier = modifier,
+        shape = RoundedCornerShape(size = 16.dp),
+        value = value,
+        onValueChange = { newText ->
+            val filteredText = newText.filter { it != '\n' && it != '\t' }
+            onValueChange(filteredText)
+        },
+        placeholder = { Text(text = label) },
+        singleLine = singleLine,
+        trailingIcon = {
+            IconButton(onClick = {}) {
+                Icon(
+                    painter = painterResource(id = trailingIcon),
+                    contentDescription = "Buscar",
+                    tint = DutchWhite.copy(alpha = 0.5f)
+                )
+            }
+        },
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = Night,
+            unfocusedContainerColor = EerieBlack,
+            focusedTextColor = DutchWhite,
+            unfocusedTextColor = DutchWhite.copy(alpha = 0.8f),
+            focusedIndicatorColor = DutchWhite,
+            unfocusedIndicatorColor = DutchWhite.copy(alpha = 0.8f)
         )
     )
 }

@@ -4,7 +4,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -16,6 +20,7 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -28,7 +33,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.sp
 import com.example.mist.R
 import com.example.mist.ui.theme.DutchWhite
@@ -244,4 +251,108 @@ fun DefaultTopBar(
             navigationIconContentColor = DutchWhite
         )
     )
+}
+
+@Composable
+fun HomeTopBar(
+    userName: String,
+    progress: Float,
+    level: Int = 1,
+    nextLevel: Int = 80
+) {
+    Column(
+        modifier = Modifier
+            .shadow(
+                elevation = 4.dp,
+                ambientColor = Color(0x40000000),
+                spotColor = Color(0x40000000),
+            )
+            .fillMaxWidth()
+            .height(IntrinsicSize.Min)
+            .background(
+                color = EerieBlack,
+                shape = RoundedCornerShape(
+                    topStart = 0.dp, topEnd = 0.dp,
+                    bottomStart = 20.dp, bottomEnd = 20.dp
+                )
+            )
+            .padding(
+                start = 30.dp,
+                end = 30.dp,
+                top = 55.dp,
+                bottom = 20.dp
+            ),
+        horizontalAlignment = Alignment.Start
+    ) {
+        Text(
+            text = "Hola, $userName 👋",
+            style = TextStyle(
+                fontSize = 24.sp,
+                fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_bold)),
+                color = DutchWhite
+            )
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = "Progreso de aprendizaje:",
+            style = TextStyle(
+                fontSize = 12.sp,
+                fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_semibold_italic)),
+                color = DutchWhite
+            )
+        )
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(30.dp)
+        ) {
+            LinearProgressIndicator(
+                progress = { progress },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(5.dp)
+                    .clip(RoundedCornerShape(4.dp))
+                    .align(Alignment.CenterStart),
+                color = DutchWhite,
+                trackColor = DutchWhite.copy(alpha = 0.5f)
+            )
+
+            Icon(
+                painter = painterResource(id = R.drawable.ic_rocket),
+                contentDescription = "Progress Indicator",
+                tint = Color.Unspecified,
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .align(Alignment.CenterStart)
+                    .offset(x = progress.dp * 320)
+            )
+        }
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Text(
+                text = "Nivel actual: $level",
+                style = TextStyle(
+                    fontSize = 10.sp,
+                    fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_extrabold_italic)),
+                    color = DutchWhite
+                )
+            )
+
+            Text(
+                text = "$nextLevel / 150 XP",
+                style = TextStyle(
+                    fontSize = 10.sp,
+                    fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_extrabold_italic)),
+                    color = DutchWhite
+                )
+            )
+        }
+    }
 }
