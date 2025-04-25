@@ -44,12 +44,13 @@ class LessonRepository {
     suspend fun addUserLesson(context: Context, uid: String, lesson: Lesson): UserLesson? {
         return try {
             Log.d("LessonRepository", "Creando directorio local...")
+            //val fileName = "${lesson.title}.py"
             val fileName = "${lesson.id}.py"
             val fileContent = "# Código de python de ${lesson.title}\\n"
 
             // guardar archivo localmente
             Log.d("LessonRepository", "Guardando archivo localmente...")
-            val fileDir = File(context.filesDir, "ejercicios/$uid")
+            val fileDir = File(context.filesDir, "exercises/$uid")
             if(!fileDir.exists()) {
                 val created = fileDir.mkdirs()
                 Log.d("LessonRepository", "Directorio local creado =  ${created}")
@@ -81,6 +82,7 @@ class LessonRepository {
             Log.d("LessonRepository", "antes del set ${userLesson}")
             Log.d("LessonRepository", "Guardando userLesson en subcolección ejercicios...")
             firestore.collection("users").document(uid).collection("exercises")
+                //.document(lesson.title).set(userLesson).await()
                 .document(lesson.id).set(userLesson).await()
 
             Log.d("LessonRepository", "Archivo guardado localmente en: ${file.absolutePath}")

@@ -1,6 +1,5 @@
 package com.example.mist.pages
 
-
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -227,6 +226,13 @@ fun LessonCard(lesson: Lesson, onClick: () -> Unit) {
                 "ic_git" -> R.drawable.ic_git
                 else -> R.drawable.ic_user_astronaut // default
             }
+
+            if(lesson.icon.lowercase().isEmpty()){
+                lesson.icon = "ic_user_astronaut"
+            }
+
+            lesson.id = lesson.title.replace(" ", "_")
+            //lesson.id = lesson.hobby + "_e"
 
             Image(
                 painter = painterResource(id = iconResId),

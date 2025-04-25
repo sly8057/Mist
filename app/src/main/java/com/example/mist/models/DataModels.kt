@@ -1,8 +1,8 @@
 package com.example.mist.models
 
 data class Lesson(
-    val id: String = "",
-    val icon: String = "",
+    var id: String = "",
+    var icon: String = "",
     val hobby: String = "",
     val level: String = "",
     val hints: List<String> = emptyList(),
