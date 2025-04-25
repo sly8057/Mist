@@ -16,11 +16,16 @@ class AuthViewModel : ViewModel() {
         checkAuthStatus()
     }
 
+    fun getCurrentUserId(): String? {
+        return auth.currentUser?.uid
+    }
+
     fun checkAuthStatus(){
-        if(auth.currentUser==null){
+        val uid = auth.currentUser?.uid
+        if(uid == null){
             _authState.value = AuthState.Unauthenticated
         }else{
-            _authState.value = AuthState.Authenticated
+            _authState.value = AuthState.Authenticated(uid)
         }
     }
 
@@ -33,7 +38,12 @@ class AuthViewModel : ViewModel() {
         _authState.value = AuthState.Loading
         auth.signInWithEmailAndPassword(email,password).addOnCompleteListener{task->
             if (task.isSuccessful){
-                _authState.value = AuthState.Authenticated
+                val uid = auth.currentUser?.uid
+                if(uid != null) {
+                    _authState.value = AuthState.Authenticated(uid)
+                } else {
+                    _authState.value = AuthState.Error("No se pudo obtener el UID del usuario")
+                }
             }else{
                 _authState.value = AuthState.Error(task.exception?.message?:"Algo salió mal")
             }
@@ -50,7 +60,12 @@ class AuthViewModel : ViewModel() {
         auth.createUserWithEmailAndPassword(email,password)
             .addOnCompleteListener{task->
                 if (task.isSuccessful){
-                    _authState.value = AuthState.Authenticated
+                    val uid = auth.currentUser?.uid
+                    if(uid != null) {
+                        _authState.value = AuthState.Authenticated(uid)
+                    } else {
+                        _authState.value = AuthState.Error("No se pudo obtener el UID del usuario")
+                    }
                 }else{
                     _authState.value = AuthState.Error(task.exception?.message?:"Something went wrong")
                 }
@@ -66,7 +81,7 @@ class AuthViewModel : ViewModel() {
 
 
 sealed class AuthState{
-    object Authenticated : AuthState()
+    data class Authenticated(val uid: String) : AuthState()
     object Unauthenticated : AuthState()
     object Loading : AuthState()
     data class Error(val message : String) : AuthState()

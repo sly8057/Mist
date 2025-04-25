@@ -20,7 +20,7 @@ class LessonRepository {
     //private val storage = Firebase.storage
 
     fun getAllLessons(): Flow<List<Lesson>> = callbackFlow {
-        val listener = firestore.collection("ejercicios")
+        val listener = firestore.collection("exercises")
             .addSnapshotListener { snapshot, e ->
                 if (e != null) {
                     e.printStackTrace()
@@ -75,12 +75,12 @@ class LessonRepository {
 
             // guardar en Firestore
             Log.d("LessonRepository", "Guardando usuario en Firestore...")
-            firestore.collection("usuarios").document(uid)
+            firestore.collection("users").document(uid)
                 .set(mapOf("uid" to uid), SetOptions.merge())
 
             Log.d("LessonRepository", "antes del set ${userLesson}")
             Log.d("LessonRepository", "Guardando userLesson en subcolección ejercicios...")
-            firestore.collection("usuarios").document(uid).collection("ejercicios")
+            firestore.collection("users").document(uid).collection("exercises")
                 .document(lesson.id).set(userLesson).await()
 
             Log.d("LessonRepository", "Archivo guardado localmente en: ${file.absolutePath}")
@@ -95,7 +95,7 @@ class LessonRepository {
     }
 
     fun getUserLessons(uid: String): Flow<List<UserLesson>> = callbackFlow {
-        val listener = firestore.collection("usuarios").document(uid).collection("ejercicios")
+        val listener = firestore.collection("users").document(uid).collection("exercises")
             .addSnapshotListener { snapshot, _ ->
                 val userLessons = snapshot?.documents?.mapNotNull { it.toObject(UserLesson::class.java) } ?: emptyList()
                 trySend(userLessons)

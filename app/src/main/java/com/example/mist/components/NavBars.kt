@@ -11,9 +11,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -42,6 +44,7 @@ import com.example.mist.ui.theme.DutchWhite
 import com.example.mist.ui.theme.EerieBlack
 import com.example.mist.ui.theme.ForestGreen
 import com.example.mist.ui.theme.HunterGreen
+import com.example.mist.ui.theme.Night
 import com.example.mist.ui.theme.getImageVectorFromDrawable
 
 data class BottomNavItem(
@@ -62,8 +65,9 @@ fun CustomBottomBar(navController: NavHostController) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(80.dp)
-            .padding(vertical = 8.dp),
+            .wrapContentHeight()
+            .background(Night)
+            .navigationBarsPadding(),
         //.padding(horizontal = 24.dp, vertical = 8.dp),
         contentAlignment = Alignment.BottomCenter
     ) {
