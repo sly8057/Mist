@@ -78,7 +78,7 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavHostController,
             navController = navController,
             mostrarBorde = true,
             nivelUsuario = 10,
-            onClick = { navController.navigate("quiz") }) }
+            onClick = { authViewModel.signout() }) }
     ) { innerPadding ->
         ProfileContent(modifier.padding(innerPadding), authViewModel)
     }

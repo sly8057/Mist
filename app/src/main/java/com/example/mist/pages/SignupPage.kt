@@ -2,8 +2,10 @@ package com.example.mist.pages
 
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -61,7 +63,11 @@ fun SignupPage(
 
     LaunchedEffect(authState.value) {
         when (authState.value) {
-            is AuthState.Authenticated -> navController.navigate("home")
+            is AuthState.Authenticated -> {
+                if(isChecked)
+                    navController.navigate("quiz")
+                navController.navigate("home")
+            }
             is AuthState.Error -> Toast.makeText(
                 context,
                 (authState.value as AuthState.Error).message, Toast.LENGTH_SHORT
@@ -120,7 +126,8 @@ fun SignupPage(
             modifier = Modifier
                 .height(50.dp)
                 .fillMaxWidth()
-                .padding(horizontal = 10.dp),
+                .padding(horizontal = 10.dp)
+                .clickable { isChecked = !isChecked },
             verticalAlignment = Alignment.CenterVertically
         ) {
             Checkbox(
@@ -134,10 +141,8 @@ fun SignupPage(
                 )
             )
 
-            Spacer(modifier = Modifier.width(8.dp))
-
             Text(
-                text = "Realizar quiz de afición",
+                text = if(isChecked) "Realizar quiz de afición" else "No realizar quiz de afición",
                 style = TextStyle(
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onBackground,
@@ -151,11 +156,11 @@ fun SignupPage(
         PrimaryButton(
             text = "Regístrate",
             onClick = {
-                if(password == passwordConfirmation){
-                    authViewModel.signup(email,password)
-                }else{
+                if(password == passwordConfirmation)
+                    authViewModel.signup(email, password)
+                else
                     Toast.makeText(context, "La contraseña no coincide", Toast.LENGTH_SHORT).show()
-                } },
+            },
             enabled = authState.value != AuthState.Loading
         )
 
@@ -163,7 +168,8 @@ fun SignupPage(
 
         SecondaryTextButton(
             text = "Ya tienes cuenta? Inicia sesión",
-            onClick = { navController.navigate("login") })
+            onClick = { navController.navigate("login") }
+        )
 
     }
 }
