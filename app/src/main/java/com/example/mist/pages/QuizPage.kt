@@ -6,24 +6,29 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -31,8 +36,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -41,246 +46,231 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.mist.AuthState
+import com.example.mist.AuthViewModel
 import com.example.mist.R
+import com.example.mist.components.QuizTopBar
 import com.example.mist.ui.theme.*
 
-@Composable
-fun QuizPage(modifier: Modifier = Modifier, navController: NavHostController, /*authViewModel: AuthViewModel*/){
-    /*val authState = authViewModel.authState.observeAsState()
-    val context = LocalContext.current
 
-    LaunchedEffect(authState.value) {
-        when(authState.value) {
-            is AuthState.Unauthenticated -> navController.navigate("start")
-            else -> Unit
-        }
-    }*/
+@Composable
+fun QuizPage(
+    modifier: Modifier = Modifier,
+    navController: NavHostController,
+    authViewModel: AuthViewModel
+) {
+    val authState = authViewModel.authState.observeAsState()
 
     var currentQuestionIndex by remember { mutableIntStateOf(0) }
     var selectedOption by remember { mutableIntStateOf(-1) }
-    var scores by remember { mutableStateOf(mutableMapOf<String, Int>()) }
-    val selectedOptions = remember { mutableStateMapOf<Int, Int>()}
+    val scores by remember { mutableStateOf(mutableMapOf<String, Int>()) }
+    val selectedOptions = remember { mutableStateMapOf<Int, Int>() }
+    var isClicked by remember { mutableStateOf(false) }
 
     val currentQuestion = questions[currentQuestionIndex]
-    var progress = (currentQuestionIndex + 1).toFloat() / questions.size
+    val progress = (currentQuestionIndex + 1).toFloat() / questions.size
     var showDialog by remember { mutableStateOf(false) }
-    if(showDialog) com.example.mist.popup.QuizPopUp (onDismiss = { showDialog = false }, scores, navController)
+    if (showDialog) com.example.mist.popup.QuizPopUp(
+        onDismiss = { showDialog = false },
+        scores,
+        navController,
+        authViewModel
+    )
 
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .background(backgroundColor)
-        .padding(bottom = 50.dp),
-        verticalArrangement = Arrangement.spacedBy(30.dp, Alignment.Top),
-        horizontalAlignment = Alignment.CenterHorizontally,){
+    LaunchedEffect(authState.value) {
+        when (authState.value) {
+            is AuthState.Unauthenticated -> navController.navigate("start")
+            else -> Unit
+        }
+    }
 
-        Spacer(modifier = Modifier
-            .height(20.dp)
-            .background(EerieBlack)
-            )
-
-        Column(modifier = Modifier) {
-
-            TopBarWithProgress(
+    Scaffold(
+        contentWindowInsets = WindowInsets.systemBars,
+        topBar = {
+            QuizTopBar(
+                title = "QUIZ",
                 progress = progress,
-                modifier = Modifier.padding(top = 16.dp)
+                currentProgress = "${(progress * questions.size).toInt()}/${questions.size}",
+                onClick = { authViewModel.signout() }
             )
         }
-        Spacer(modifier = Modifier.height(20.dp))
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(backgroundColor)
+                .padding(top = innerPadding.calculateTopPadding()),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
 
-        Column(modifier = Modifier
-            .clip(shape = RoundedCornerShape(10.dp))
-            .background(EerieBlack)
-            .width(300.dp)
-            .height(580.dp),
-            //verticalArrangement = Arrangement.SpaceBetween
-            ){
-            //TopBarWithProgress(progress = progress)
-            Text(
-                text = "${currentQuestionIndex + 1}. ${currentQuestion.text}",
-                //color = DutchWhite,
-                style = TextStyle(
-                    fontSize = 15.sp,
-                    fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_bold)),
-                    color = DutchWhite,
-                ),
-                modifier = Modifier.fillMaxWidth()
-                    .padding(top = 29.dp, bottom = 0.dp, start=34.dp, end=34.dp),
-                maxLines = 3,
-                overflow = TextOverflow.Ellipsis
+            Spacer(
+                modifier = Modifier
+                    .height(40.dp)
+                    .background(EerieBlack)
             )
 
-            Spacer(modifier = Modifier.height(10.dp))
-
-            Canvas(modifier = Modifier.width(275.dp).
-            height(1.dp)) {
-                val canvasWidth = size.width
-                val canvasHeight = size.height
-                drawLine(
-                    color = DutchWhite,
-                    start = Offset(x = 75f, y = 0f),
-                    end = Offset(x = canvasWidth, y = 0f),
-                    strokeWidth = 6f
-                )
-            }
-
-            Spacer(modifier = Modifier.height(28.dp))
-
-            currentQuestion.options.forEachIndexed{ index, option ->
-                OutlinedCard(
-                    colors = CardDefaults.cardColors(
-                        containerColor = DutchWhite
+            Column(
+                modifier = Modifier
+                    .width(IntrinsicSize.Min)
+                    .height(IntrinsicSize.Max)
+                    .background(
+                        color = EerieBlack,
+                        shape = RoundedCornerShape(10.dp)
+                    )
+                    .padding(30.dp),
+            ) {
+                Text(
+                    text = "${currentQuestionIndex + 1}. ${currentQuestion.text}",
+                    style = TextStyle(
+                        fontSize = 15.sp,
+                        fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_bold)),
+                        color = DutchWhite,
                     ),
-                    border = BorderStroke(2.dp, Asparagus),
-                    modifier = Modifier.
-                        padding(horizontal=25.dp,).
-                        fillMaxWidth().
-                        width(250.dp).
-                        height(50.dp).
-                        align(Alignment.CenterHorizontally).
-                        clickable { selectedOption = index },
+                    modifier = Modifier.fillMaxWidth(),
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 3
+                )
 
-                    shape = RoundedCornerShape(10.dp),
+                Spacer(modifier = Modifier.height(10.dp))
 
-                ){
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(0.dp)
-                    ){
-                        RadioButton(
-                            selected = selectedOption == index,
-                            onClick = { selectedOption = index
-                                      println(selectedOption)},
-                        )
-                        Text(text = option, modifier = Modifier.padding(0.dp),
-                            style = TextStyle(
-                                fontSize = 12.sp,
-                                fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_regular)),
-                                color = EerieBlack),
-                        )
-                    }
-
-                }
-
-                Spacer(modifier = Modifier.height(30.dp))
-            }
-
-            Row{
-                Button(
-                    onClick = {
-                        if(currentQuestionIndex > 0){
-                            currentQuestionIndex--
-                            selectedOption = selectedOptions[currentQuestionIndex] ?: -1
-                            println(scores)
-                        }
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = ForestGreen),
+                Canvas(
                     modifier = Modifier
-                        .padding(start = 25.dp)
-                        .height(50.dp)
-                        .width(80.dp),
-                    shape = RoundedCornerShape(10.dp)
-                ){
-                    Icon(painter = painterResource(id=R.drawable.ic_backward_step),
-                        contentDescription = null)
+                        .fillMaxWidth()
+                        .height(1.dp)
+                ) {
+                    drawLine(
+                        color = DutchWhite,
+                        start = Offset(x = 0f, y = 0f),
+                        end = Offset(x = size.width, y = 0f),
+                        strokeWidth = 5f
+                    )
                 }
 
-                Button(
-                    onClick = {
-                        if(selectedOption != -1){
-                            val category = categories[selectedOption]
+                Spacer(modifier = Modifier.height(25.dp))
 
-                            val previousSelection = selectedOptions[currentQuestionIndex]
+                currentQuestion.options.forEachIndexed { index, option ->
+                    OutlinedCard(
+                        colors = CardDefaults.cardColors(containerColor = if(isClicked) Asparagus else DutchWhite),
+                        border = BorderStroke(3.dp, if(isClicked) ForestGreen else Asparagus),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(60.dp)
+                            .clickable { selectedOption = index },
+                        shape = RoundedCornerShape(10.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(5.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Start
+                        ) {
+                            RadioButton(
+                                selected = selectedOption == index,
+                                onClick = {
+                                    !isClicked
+                                    selectedOption = index
+                                    println(selectedOption)
+                                },
+                            )
+                            Text(
+                                text = option,
+                                style = TextStyle(
+                                    fontSize = 12.sp,
+                                    color = if(isClicked) DutchWhite else EerieBlack,
+                                    fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_regular))
+                                )
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(30.dp))
+                }
 
-                            if(previousSelection != selectedOption){
-                                previousSelection?.let { oldSelection ->
-                                    val oldCategory = categories[oldSelection]
-                                    scores[oldCategory] = (scores[oldCategory] ?: 0) - 1
-                                }
-                            }
-
-                            if(previousSelection != null && previousSelection == selectedOption){
-
-                            }else{
-                                scores[category] = (scores[category] ?: 0) + 1
-                            }
-                            selectedOptions[currentQuestionIndex] = selectedOption
-
-                            if(currentQuestionIndex < questions.lastIndex){
-                                currentQuestionIndex++
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    Button(
+                        onClick = {
+                            if (currentQuestionIndex > 0) {
+                                currentQuestionIndex--
                                 selectedOption = selectedOptions[currentQuestionIndex] ?: -1
                                 println(scores)
                             }
-                            else{
-                                println("Puntaje: $scores")
-                                showDialog = true
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = ForestGreen),
+                        modifier = Modifier.width(90.dp).height(50.dp),
+                        shape = RoundedCornerShape(10.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_backward_step),
+                            contentDescription = "Backward step",
+                            tint = DutchWhite,
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(10.dp))
+
+                    Button(
+                        modifier = Modifier.fillMaxWidth().height(50.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = ForestGreen),
+                        shape = RoundedCornerShape(10.dp),
+                        onClick = {
+                            if (selectedOption != -1) {
+                                val category = categories[selectedOption]
+                                val previousSelection = selectedOptions[currentQuestionIndex]
+
+                                if (previousSelection != selectedOption) {
+                                    previousSelection?.let { oldSelection ->
+                                        val oldCategory = categories[oldSelection]
+                                        scores[oldCategory] = (scores[oldCategory] ?: 0) - 1
+                                    }
+                                }
+
+                                if (previousSelection == null || previousSelection != selectedOption) {
+                                    scores[category] = (scores[category] ?: 0) + 1
+                                }
+                                selectedOptions[currentQuestionIndex] = selectedOption
+
+                                if (currentQuestionIndex < questions.lastIndex) {
+                                    currentQuestionIndex++
+                                    selectedOption = selectedOptions[currentQuestionIndex] ?: -1
+                                    println(scores)
+                                } else {
+                                    println("Puntaje: $scores")
+                                    showDialog = true
+                                }
                             }
                         }
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = ForestGreen),
-                    modifier = Modifier
-                        .padding(start = 10.dp, end = 25.dp)
-                        .height(50.dp)
-                        .width(175.dp),
-                    shape = RoundedCornerShape(10.dp)
-                ){
-                    Text(text="Siguiente",
-                        modifier = Modifier
-                            .padding(end=10.dp),
-                        style = TextStyle(
-                            fontFamily= FontFamily(Font(R.font.relay_jetbrains_mono_bold))
+                    ) {
+                        Text(
+                            text = "Siguiente",
+                            style = TextStyle(
+                                fontSize = 16.sp,
+                                color = DutchWhite,
+                                fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_bold))
+                            ),
+                            modifier = Modifier.padding(end = 10.dp)
                         )
-                    )
-                    Icon(painter = painterResource(id=R.drawable.ic_forward_step),
-                        contentDescription = null)
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_forward_step),
+                            contentDescription = "Forward step",
+                            tint = DutchWhite,
+                        )
+                    }
                 }
             }
-
         }
-
     }
-    
 }
 
-@Composable
-fun TopBarWithProgress(progress: Float, modifier: Modifier = Modifier) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-    ) {
-        Text(
-            text = "${(progress * questions.size).toInt()}/${questions.size}",
-            style = TextStyle(
-                fontSize = 14.sp,
-                fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_bold)),
-                color = DutchWhite,
-            ),
-            modifier = Modifier.align(Alignment.End)
-        )
-
-        LinearProgressIndicator(
-            progress = { progress },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(8.dp)
-                .clip(RoundedCornerShape(4.dp)),
-            color = DutchWhite,
-            trackColor = DutchWhite.copy(alpha = 0.5f)
-        )
-        Spacer(Modifier.height(20.dp))
-    }
-
-}
-
-data class Question(val text: String,
-    val options: List<String>)
+data class Question(
+    val text: String,
+    val options: List<String>
+)
 
 val categories = listOf(
     "Deportes",
     "Artes Visuales",
     "Entretenimiento",
     "Artes Literarias",
-    "Miscelaneo")
+    "Miscelaneo"
+)
 
 val questions = listOf(
     Question(
@@ -333,11 +323,4 @@ val questions = listOf(
             "No quiero una categoría fija, prefiero ejercicios aleatorios."
         )
     ),
-
 )
-
-/*@Preview
-@Composable
-fun QuizPreview(){
-    QuizPage()
-}*/

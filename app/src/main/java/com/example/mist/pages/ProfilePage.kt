@@ -51,6 +51,7 @@ import com.example.mist.AuthState
 import com.example.mist.AuthViewModel
 import com.example.mist.R
 import com.example.mist.components.CustomBottomBar
+import com.example.mist.components.CustomTopBar
 import com.example.mist.components.DefaultTopBar
 import com.example.mist.ui.theme.DutchWhite
 import com.example.mist.ui.theme.EerieBlack
@@ -73,12 +74,16 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavHostController,
     Scaffold (
         contentWindowInsets = WindowInsets.systemBars,
         bottomBar = { CustomBottomBar(navController) },
-        topBar = { DefaultTopBar(
-            title = "Perfil",
-            navController = navController,
-            mostrarBorde = true,
-            nivelUsuario = 10,
-            onClick = { authViewModel.signout() }) }
+        topBar = {
+            /*DefaultTopBar(
+                title = "Perfil",
+                navController = navController,
+                mostrarBorde = true,
+                nivelUsuario = 10,
+                onClick = { authViewModel.signout() }
+            )*/
+            CustomTopBar(title = "Perfil", onClick = { authViewModel.signout() }, navController)
+        }
     ) { innerPadding ->
         ProfileContent(modifier.padding(innerPadding), authViewModel)
     }

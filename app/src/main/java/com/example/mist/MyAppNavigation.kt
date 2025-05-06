@@ -87,7 +87,7 @@ fun MyAppNavigation(
         composable("quiz") {
             QuizPage(
                 modifier = modifier,
-                navController = navController/*, authViewModel = authViewModel*/
+                navController = navController, authViewModel = authViewModel
             )
         }
         composable("playground") {

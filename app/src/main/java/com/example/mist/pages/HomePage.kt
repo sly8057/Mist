@@ -99,8 +99,8 @@ fun HomePage(
         bottomBar = { CustomBottomBar(navController) },
         topBar = {
             HomeTopBar(
-                userName = "Whispersoul",
-//                userName = "${FirebaseAuth.getInstance().currentUser?.email}",
+//                userName = "Whispersoul",
+                userName = "${FirebaseAuth.getInstance().currentUser?.email}",
                 progress = progress
             )
         }

@@ -95,8 +95,21 @@ class AuthViewModel : ViewModel() {
             .add(user)
             .addOnSuccessListener {
                 Log.d("AuthViewModel", "User ${it.id} created successfully")
-            }.addOnFailureListener {
+            } .addOnFailureListener {
                 Log.d("AuthViewModel", "Error creating user: ${it.message}")
+            }
+    }
+
+    fun updateUserHobby(hobby: String, onComplete: (Boolean) -> Unit) {
+        val userId = auth.currentUser?.uid ?: return onComplete(false)
+
+        FirebaseFirestore.getInstance().collection("users")
+            .document(userId)
+            .update("hobby", hobby)
+            .addOnSuccessListener {
+                onComplete(true)
+            } .addOnFailureListener {
+                onComplete(false)
             }
     }
 
