@@ -243,7 +243,6 @@ fun QuizPage(modifier: Modifier = Modifier, navController: NavHostController, /*
 
 @Composable
 fun TopBarWithProgress(progress: Float, modifier: Modifier = Modifier) {
-
     Column(
         modifier = Modifier
             .fillMaxWidth()

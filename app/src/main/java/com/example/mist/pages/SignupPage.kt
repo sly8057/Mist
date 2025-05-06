@@ -64,9 +64,10 @@ fun SignupPage(
     LaunchedEffect(authState.value) {
         when (authState.value) {
             is AuthState.Authenticated -> {
-                if(isChecked)
+                if(!isChecked)
+                    navController.navigate("home")
+                else
                     navController.navigate("quiz")
-                navController.navigate("home")
             }
             is AuthState.Error -> Toast.makeText(
                 context,

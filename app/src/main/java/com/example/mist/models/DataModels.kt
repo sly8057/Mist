@@ -25,3 +25,29 @@ data class UserLesson(
     val test: String = "",
     val storagePath: String = ""
 )
+
+data class User(
+    val userId: String = "",
+    val name: String = "",
+    val email: String = "",
+    val hobby: String = "Todos",
+    val lessons: List<UserLesson> = emptyList(),
+    val completedLessons: List<Lesson> = emptyList(),
+    val points: Int = 0,
+    val level: String = "",
+    val profilePicture: String = ""
+) {
+    fun toMap(): Map<String, Any?> {
+        return mapOf(
+            "user_uid" to this.userId,
+            "display_name" to this.name,
+            "email" to this.email,
+            "hobby" to this.hobby,
+            "lessons" to this.lessons,
+            "completedLessons" to this.completedLessons,
+            "points" to this.points,
+            "level" to this.level,
+            "profilePicture" to this.profilePicture
+        )
+    }
+}

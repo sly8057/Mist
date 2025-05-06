@@ -54,6 +54,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.runtime.collectAsState
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun HomePage(
@@ -99,6 +100,7 @@ fun HomePage(
         topBar = {
             HomeTopBar(
                 userName = "Whispersoul",
+//                userName = "${FirebaseAuth.getInstance().currentUser?.email}",
                 progress = progress
             )
         }

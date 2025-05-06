@@ -1,9 +1,12 @@
 package com.example.mist
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.mist.models.User
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class AuthViewModel : ViewModel() {
 
@@ -57,11 +60,12 @@ class AuthViewModel : ViewModel() {
             return
         }
         _authState.value = AuthState.Loading
-        auth.createUserWithEmailAndPassword(email,password)
-            .addOnCompleteListener{task->
-                if (task.isSuccessful){
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener{ task ->
+                if (task.isSuccessful) {
                     val uid = auth.currentUser?.uid
                     if(uid != null) {
+                        createUser(email.substringBefore("@"))
                         _authState.value = AuthState.Authenticated(uid)
                     } else {
                         _authState.value = AuthState.Error("No se pudo obtener el UID del usuario")
@@ -69,6 +73,30 @@ class AuthViewModel : ViewModel() {
                 }else{
                     _authState.value = AuthState.Error(task.exception?.message?:"Something went wrong")
                 }
+            }
+    }
+
+    private fun createUser(displayName: String) {
+        val userId = auth.currentUser?.uid
+
+        val user = User(
+            userId = userId.toString(),
+            name = displayName,
+            email = auth.currentUser?.email.toString(),
+//            hobby = "Miscellaneous",
+            lessons = emptyList(),
+            completedLessons = emptyList(),
+            points = 0,
+            level = "0",
+            profilePicture = ""
+        ).toMap()
+
+        FirebaseFirestore.getInstance().collection("users")
+            .add(user)
+            .addOnSuccessListener {
+                Log.d("AuthViewModel", "User ${it.id} created successfully")
+            }.addOnFailureListener {
+                Log.d("AuthViewModel", "Error creating user: ${it.message}")
             }
     }
 
