@@ -45,6 +45,19 @@ android {
     }
 }
 
+chaquopy {
+    defaultConfig {
+        pip {
+            //install("unittest")
+        }
+    }
+    sourceSets {
+        getByName("main") {
+            srcDirs("src/main/assets/python")
+        }
+    }
+}
+
 dependencies {
     implementation(libs.androidx.graphics.shapes)
     implementation(libs.androidx.core.ktx)

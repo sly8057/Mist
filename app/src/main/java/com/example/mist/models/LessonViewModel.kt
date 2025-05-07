@@ -8,11 +8,15 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class LessonViewModel(
     private val repository: LessonRepository,
@@ -78,6 +82,31 @@ class LessonViewModel(
         viewModelScope.launch {
             repository.getUserLessons(uid).collect { lessons ->
                 _userLessons.value = lessons
+            }
+        }
+    }
+
+    fun updateUserLessonCode(lessonId: String, newCode: String) {
+        val uid = auth.currentUser?.uid ?: return
+        viewModelScope.launch {
+            val docRef = Firebase.firestore
+                .collection("usuarios").document(uid)
+                .collection("ejercicios").document(lessonId)
+
+            docRef.update("pythonCode", newCode).addOnSuccessListener {
+                Log.d("LessonViewModel", "Código de Python actualizado correctamente")
+            }.addOnFailureListener {
+                Log.e("LessonViewModel", "Error al actualizar el código de Python")
+            }
+        }
+        repository.saveUserLessonCode(uid, lessonId, newCode)
+    }
+
+    fun runCurrentLessonTest(context: Context, lesson: UserLesson, onResult: (String) -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val result = repository.runLessonTest(context, lesson.pythonCode, lesson.test)
+            withContext(Dispatchers.Main) {
+                onResult(result)
             }
         }
     }

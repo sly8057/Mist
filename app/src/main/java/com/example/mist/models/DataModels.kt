@@ -23,7 +23,7 @@ data class UserLesson(
     val title: String = "",
     val state: String = "",
     val test: String = "",
-    val storagePath: String = ""
+    val pythonCode: String = ""
 )
 
 data class User(

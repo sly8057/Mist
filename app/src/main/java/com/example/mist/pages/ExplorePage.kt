@@ -55,7 +55,6 @@ fun ExplorePage(
     lessonViewModel: LessonViewModel
 ) {
     Scaffold(
-        //modifier = Modifier.padding(bottom = 40.dp),
         contentWindowInsets = WindowInsets.systemBars,
         bottomBar = { CustomBottomBar(navController) },
         topBar = {
@@ -112,12 +111,6 @@ fun ExploreContent(
                 trailingIcon = R.drawable.ic_search,
                 modifier = Modifier.fillMaxWidth()
             )
-            /*TextField(
-                value = searchQuery,
-                onValueChange = { searchQuery = it },
-                placeholder = { Text("Buscar lección...") },
-                modifier = Modifier.fillMaxWidth()
-            )*/
 
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -137,12 +130,10 @@ fun ExploreContent(
                 )
             }
 
-            //Spacer(modifier = Modifier.height(20.dp))
-
             LazyColumn(
                 modifier = modifier
-                    .fillMaxSize(),
-                //.padding(16.dp),
+                    .fillMaxSize()
+                    .weight(1f),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 items(filteredLessons) { lesson ->
@@ -155,7 +146,6 @@ fun ExploreContent(
                 }
             }
         }
-
     }
 
     if(lessonViewModel.showLessonDialog) {
@@ -232,7 +222,6 @@ fun LessonCard(lesson: Lesson, onClick: () -> Unit) {
             }
 
             lesson.id = lesson.title.replace(" ", "_")
-            //lesson.id = lesson.hobby + "_e"
 
             Image(
                 painter = painterResource(id = iconResId),
@@ -285,12 +274,9 @@ fun DropdownFilter(
             ),
             modifier = Modifier
                 .height(36.dp)
-            //.clip(RoundedCornerShape(10.dp))
         ) {
             Text(
-                //text = selectedOption.ifEmpty { label },
                 text = if (selectedOption == "Todos") "$label: $selectedOption" else selectedOption,
-                //text = "$label: $selectedOption",
                 color = DutchWhite,
                 fontSize = 12.sp,
             )

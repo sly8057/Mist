@@ -2,6 +2,8 @@ package com.example.mist.models
 
 import android.content.Context
 import android.util.Log
+import com.chaquo.python.Python
+import com.chaquo.python.android.AndroidPlatform
 import com.example.mist.models.Lesson
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -17,7 +19,6 @@ import java.io.File
 
 class LessonRepository {
     private val firestore = Firebase.firestore
-    //private val storage = Firebase.storage
 
     fun getAllLessons(): Flow<List<Lesson>> = callbackFlow {
         val listener = firestore.collection("exercises")
@@ -44,21 +45,7 @@ class LessonRepository {
     suspend fun addUserLesson(context: Context, uid: String, lesson: Lesson): UserLesson? {
         return try {
             Log.d("LessonRepository", "Creando directorio local...")
-            //val fileName = "${lesson.title}.py"
-            val fileName = "${lesson.id}.py"
             val fileContent = "# Código de python de ${lesson.title}\\n"
-
-            // guardar archivo localmente
-            Log.d("LessonRepository", "Guardando archivo localmente...")
-            val fileDir = File(context.filesDir, "exercises/$uid")
-            if(!fileDir.exists()) {
-                val created = fileDir.mkdirs()
-                Log.d("LessonRepository", "Directorio local creado =  ${created}")
-            }
-
-            val file = File(fileDir, fileName)
-            file.writeText(fileContent)
-            Log.d("LessonRepository", "Archivo guardado en: ${file.absolutePath}")
 
             val userLesson = UserLesson(
                 lessonId = lesson.id,
@@ -71,7 +58,8 @@ class LessonRepository {
                 title = lesson.title,
                 state = "pendiente",
                 test = lesson.test,
-                storagePath = file.absolutePath
+                //storagePath = file.absolutePath,
+                pythonCode = fileContent
             )
 
             // guardar en Firestore
@@ -82,10 +70,8 @@ class LessonRepository {
             Log.d("LessonRepository", "antes del set ${userLesson}")
             Log.d("LessonRepository", "Guardando userLesson en subcolección ejercicios...")
             firestore.collection("users").document(uid).collection("exercises")
-                //.document(lesson.title).set(userLesson).await()
                 .document(lesson.id).set(userLesson).await()
 
-            Log.d("LessonRepository", "Archivo guardado localmente en: ${file.absolutePath}")
             Log.d("LessonRepository", "Guardando userLesson en Firestore...")
 
             userLesson
@@ -103,5 +89,29 @@ class LessonRepository {
                 trySend(userLessons)
             }
         awaitClose { listener.remove() }
+    }
+
+    fun saveUserLessonCode(uid: String, lessonId: String, newCode: String) {
+        firestore.collection("users")
+            .document(uid)
+            .collection("exercises")
+            .document(lessonId)
+            .update("pythonCode", newCode)
+    }
+
+    fun runLessonTest(context: Context, userCode: String, testFileName: String): String {
+        if(!Python.isStarted()) {
+            Python.start(AndroidPlatform(context))
+        }
+        return Python.getInstance().getModule("test_runner").callAttr("run_test",
+            writeUserCodeToFile(context, userCode),
+            testFileName.trim()
+        ).toString()
+    }
+
+    private fun writeUserCodeToFile(context: Context, code: String): String {
+        val file = File(context.filesDir, "user_code.py")
+        file.writeText(code)
+        return file.absolutePath
     }
 }

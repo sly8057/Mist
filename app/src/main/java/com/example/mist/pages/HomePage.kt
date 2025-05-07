@@ -50,10 +50,13 @@ import com.example.mist.ui.theme.ForestGreen
 import com.example.mist.ui.theme.backgroundColor
 import android.util.Log
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.runtime.collectAsState
+import com.example.mist.models.UserLesson
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
@@ -79,10 +82,7 @@ fun HomePage(
         }
     }
 
-
-
     Scaffold(
-        //modifier = Modifier.padding(bottom = 40.dp),
         contentWindowInsets = WindowInsets.systemBars,
         floatingActionButton = {
             FloatingActionButton(
@@ -106,17 +106,16 @@ fun HomePage(
         }
     ) { innerPadding ->
         HomeContent(
-            modifier = modifier.padding(innerPadding),
+            innerPadding = innerPadding,
             navController = navController,
             lessonsViewModel = lessonViewModel
         )
     }
-
 }
 
 @Composable
 fun HomeContent(
-    modifier: Modifier = Modifier,
+    innerPadding: PaddingValues,
     navController: NavHostController,
     lessonsViewModel: LessonViewModel
 ) {
@@ -131,144 +130,86 @@ fun HomeContent(
         Log.d("HomeContent", "Lecciones desde Firestore: $userlessons")
     }
 
+    val lessonRows = mutableListOf<List<UserLesson>>()
+    var index = 0
+    var rowCount = 0
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            //.padding(top = 80.dp, start = 40.dp, end = 40.dp)
-            //.padding(top = 100.dp, bottom = 120.dp)
-            .background(backgroundColor),
-    ) {
-        if(userlessons.isEmpty()){
-            Row(
-                modifier = modifier
-                    .fillMaxWidth()
-                    .height(IntrinsicSize.Max),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                AddLessonButton(
-                    onClick = {
-                        navController.navigate("explore")
-                    },
-                    modifier = Modifier.padding(vertical = 20.dp)
-                )
-            }
-
+    while (index < userlessons.size) {
+        if (rowCount % 2 == 0) {
+            lessonRows.add(listOf(userlessons[index]))
+            index += 1
         } else {
-            LazyColumn(
-                modifier = modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 50.dp),
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.CenterHorizontally,
-                //contentPadding = PaddingValues(top = 100.dp, bottom = 120.dp)
-            ) {
-                itemsIndexed(userlessons.chunked(2)) { _, pair ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        //.height(IntrinsicSize.Max),
-                        horizontalArrangement = if (pair.size == 1) Arrangement.Center else Arrangement.SpaceEvenly
-                    ) {
-                        pair.forEach { lesson ->
-                            Lesson(
-                                icon = lesson.icon,
-                                title = lesson.title,
-                                description = lesson.goal,
-                                modifier = Modifier
-                                    .weight(1f),
-                                //.clickable {}
-                                onClick = {
-                                    Log.d("HomeContent", "Lesson clicked: $lesson")
-                                    lessonsViewModel.selectUserLesson(lesson)
-                                    Log.d("HomeContent", "Lesson selected: ${lessonsViewModel.selectedUserLesson}")
-                                    navController.navigate("playground")
-                                }
-                            )
-                        }
-                    }
-                }
+            if (index + 1 < userlessons.size) {
+                lessonRows.add(listOf(userlessons[index], userlessons[index + 1]))
+            } else {
+                lessonRows.add(listOf(userlessons[index]))
             }
+            index += 2
         }
+        rowCount += 1
     }
-}
 
+    Log.d("HomeContent", "lessonRows: ${lessonRows.size}")
 
-@Composable
-fun AddLessonButton(onClick: () -> Unit, modifier: Modifier) {
-    Box(
+    LazyColumn(
         modifier = Modifier
-            .drawWithCache {
-                val roundedPolygon = RoundedPolygon(
-                    numVertices = 6,
-                    radius = size.minDimension / 1.1f,
-                    centerX = size.width / 2,
-                    centerY = size.height / 2,
-                    rounding = CornerRounding(
-                        radius = size.minDimension / 5f,
-                        smoothing = 0.1f
+            .fillMaxSize()
+            .background(backgroundColor)
+            .padding(top = 50.dp),
+        contentPadding = innerPadding
+    ) {
+        item { Spacer(modifier = Modifier.height(16.dp)) }
+
+        items(lessonRows) { row ->
+            if (row.size == 1) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    LessonCard(
+                        lesson = row[0],
+                        onClick = {
+                            Log.d("HomeContent", "Lesson clicked: ${row[0]}")
+                            lessonsViewModel.selectUserLesson(row[0])
+                            Log.d("HomeContent", "Lesson selected: ${lessonsViewModel.selectedUserLesson}")
+                            navController.navigate("playground")
+                        }
                     )
-                )
-                val roundedPolygonPath = roundedPolygon.toPath().asComposePath()
-                onDrawBehind {
-                    rotate(-90f) {
-                        drawPath(roundedPolygonPath, color = DutchWhite)
+                }
+
+            } else {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                    //horizontalArrangement = Arrangement.spacedBy(20.dp)
+                ) {
+                    row.forEach { lesson ->
+                        LessonCard(
+                            lesson = lesson,
+                            modifier = Modifier.weight(1f),
+                            onClick = {
+                                Log.d("HomeContent", "Lesson clicked: ${lesson}")
+                                lessonsViewModel.selectUserLesson(lesson)
+                                Log.d("HomeContent", "Lesson selected: ${lessonsViewModel.selectedUserLesson}")
+                                navController.navigate("playground")
+                            }
+                        )
                     }
                 }
             }
-            .size(90.dp)
-            .clickable { onClick() },
-        contentAlignment = Alignment.Center
-    ) {
-        Column(
-            modifier = Modifier
-                .drawWithCache {
-                    val roundedPolygon = RoundedPolygon(
-                        numVertices = 6,
-                        radius = size.minDimension / 1.3f,
-                        centerX = size.width / 2,
-                        centerY = size.height / 2,
-                        rounding = CornerRounding(
-                            radius = size.minDimension / 5f,
-                            smoothing = 0.1f
-                        )
-                    )
-                    val roundedPolygonPath = roundedPolygon.toPath().asComposePath()
-                    onDrawBehind {
-                        rotate(-90f) {
-                            drawPath(roundedPolygonPath, color = EerieBlack)
-                        }
-                    }
-                }
-                .fillMaxSize()
-                .padding(
-                    start = 0.dp,
-                    end = 0.dp,
-                    top = 10.dp,
-                    bottom = 10.dp
-                ),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_add),
-                contentDescription = "Agregar lección",
-                tint = DutchWhite,
-                modifier = Modifier.size(40.dp)
-            )
+
+            Spacer(modifier = Modifier.height(64.dp))
         }
     }
 }
 
 @Composable
-fun Lesson(
-    icon: String,
-    title: String,
-    description: String,
+fun LessonCard(
+    lesson: UserLesson,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {}
-) {
-    val iconResId = when (icon.lowercase()) {
+){
+    val iconResId = when (lesson.icon.lowercase()) {
         "ic_flag_solid" -> R.drawable.ic_flag_solid
         "ic_database" -> R.drawable.ic_database
         "ic_java" -> R.drawable.ic_java
@@ -277,7 +218,7 @@ fun Lesson(
     }
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .drawWithCache {
                 val roundedPolygon = RoundedPolygon(
                     numVertices = 6,
@@ -331,12 +272,12 @@ fun Lesson(
         ) {
             Icon(
                 painter = painterResource(id = iconResId),
-                contentDescription = description,
+                contentDescription = lesson.goal,
                 modifier = Modifier.size(35.dp)
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = title,
+                text = lesson.title,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 2,
                 style = TextStyle(
