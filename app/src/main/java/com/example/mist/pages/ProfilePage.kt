@@ -5,6 +5,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,6 +33,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -52,12 +55,16 @@ import com.example.mist.AuthViewModel
 import com.example.mist.R
 import com.example.mist.components.CustomBottomBar
 import com.example.mist.components.CustomTopBar
+import android.util.Log
 import com.example.mist.components.DefaultTopBar
+import com.example.mist.models.User
 import com.example.mist.ui.theme.DutchWhite
 import com.example.mist.ui.theme.EerieBlack
 import com.example.mist.ui.theme.Night
 import com.example.mist.ui.theme.backgroundColor
 import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.math.Stats
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 
 @Composable
 fun ProfilePage(modifier: Modifier = Modifier, navController: NavHostController, authViewModel: AuthViewModel) {
@@ -67,6 +74,7 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavHostController,
     LaunchedEffect(authState.value) {
         when(authState.value) {
             is AuthState.Unauthenticated -> navController.navigate("start")
+            is AuthState.Authenticated -> authViewModel.loadUserData()
             else -> Unit
         }
     }
@@ -85,12 +93,18 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavHostController,
             CustomTopBar(title = "Perfil", onClick = { authViewModel.signout() }, navController)
         }
     ) { innerPadding ->
-        ProfileContent(modifier.padding(innerPadding), authViewModel)
+        ProfileContent(modifier.padding(innerPadding), authViewModel, navController)
     }
 }
 
 @Composable
-fun ProfileContent(modifier: Modifier = Modifier, authViewModel: AuthViewModel){
+fun ProfileContent(modifier: Modifier = Modifier, authViewModel: AuthViewModel, navController: NavHostController){
+    val userData by authViewModel.userData.collectAsState()
+
+    LaunchedEffect(userData) {
+        Log.d("Profile Content", "Información del usuario: $userData")
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -113,30 +127,34 @@ fun ProfileContent(modifier: Modifier = Modifier, authViewModel: AuthViewModel){
                     .border(14.dp, DutchWhite, CircleShape)
             )
 
-            Text(
-                text = "Tontle Dinamica",
-                style = TextStyle(
-                    fontSize = 24.sp,
-                    fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_regular)),
-                    fontWeight = FontWeight(700),
-                    color = DutchWhite,
-                    textAlign = TextAlign.Center,
-                ),
-                modifier = Modifier
-                    .padding(top = 14.dp)
-            )
+            userData?.let {
+                Text(
+                    text = it.nickname,
+                    style = TextStyle(
+                        fontSize = 24.sp,
+                        fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_regular)),
+                        fontWeight = FontWeight(700),
+                        color = DutchWhite,
+                        textAlign = TextAlign.Center,
+                    ),
+                    modifier = Modifier
+                        .padding(top = 14.dp)
+                )
+            }
 
-            Text(
-                text = "@tontle_neri",
-                style = TextStyle(
-                    fontSize = 12.sp,
-                    fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_regular)),
-                    fontWeight = FontWeight(300),
-                    color = DutchWhite,
-                    textAlign = TextAlign.Center,
-                    textDecoration = TextDecoration.Underline
-                ),
-            )
+            userData?.email?.let {
+                Text(
+                    text = it,
+                    style = TextStyle(
+                        fontSize = 12.sp,
+                        fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_regular)),
+                        fontWeight = FontWeight(300),
+                        color = DutchWhite,
+                        textAlign = TextAlign.Center,
+                        textDecoration = TextDecoration.Underline
+                    ),
+                )
+            }
 
             Row(
                 modifier = Modifier
@@ -145,11 +163,11 @@ fun ProfileContent(modifier: Modifier = Modifier, authViewModel: AuthViewModel){
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ){
-                StatsCard("26", "Lecciones aprobadas")
+                StatsCard("26", "Lecciones aprobadas", navController = navController)
 
-                StatsCard("365", "Minutos programando")
+                StatsCard("Editar perfil", " ", editProfile = true, navController = navController)
 
-                StatsCard("Artes visuales", " ", true)
+                userData?.let { StatsCard(it.hobby, " ", true, navController = navController) }
             }
 
 //            Row(
@@ -239,7 +257,8 @@ fun ProfileContent(modifier: Modifier = Modifier, authViewModel: AuthViewModel){
 }
 
 @Composable
-fun StatsCard(quantity: String, category: String, hobby: Boolean = false){
+fun StatsCard(quantity: String, category: String, hobby: Boolean = false,
+              editProfile: Boolean = false, navController: NavHostController){
     OutlinedCard(
         colors = CardDefaults.cardColors(
             containerColor = Night
@@ -248,6 +267,16 @@ fun StatsCard(quantity: String, category: String, hobby: Boolean = false){
         modifier = Modifier
             .width(110.dp)
             .height(80.dp)
+            .then(
+                if(hobby || editProfile){
+                Modifier.clickable {
+                    when{
+                        hobby -> navController.navigate("quiz")
+                        editProfile -> navController.navigate("editProfile")
+                    }
+                }
+            } else {Modifier}
+            )
             //.fillMaxWidth()
     ) {
         Column (

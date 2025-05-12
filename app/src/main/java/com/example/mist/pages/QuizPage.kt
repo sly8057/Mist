@@ -155,7 +155,8 @@ fun QuizPage(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(60.dp)
-                            .clickable { selectedOption = index },
+                            .clickable { selectedOption = index
+                                       !isClicked},
                         shape = RoundedCornerShape(10.dp)
                     ) {
                         Row(

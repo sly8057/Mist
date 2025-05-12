@@ -28,10 +28,10 @@ data class UserLesson(
 
 data class User(
     val userId: String = "",
-    val name: String = "",
+    val nickname: String = "",
     val email: String = "",
     val hobby: String = "Todos",
-    val lessons: List<UserLesson> = emptyList(),
+    val bookmarks: List<UserLesson> = emptyList(),
     val completedLessons: List<Lesson> = emptyList(),
     val points: Int = 0,
     val level: String = "",
@@ -40,10 +40,10 @@ data class User(
     fun toMap(): Map<String, Any?> {
         return mapOf(
             "user_uid" to this.userId,
-            "display_name" to this.name,
+            "nickname" to this.nickname,
             "email" to this.email,
             "hobby" to this.hobby,
-            "lessons" to this.lessons,
+            "bookmarks" to this.bookmarks,
             "completedLessons" to this.completedLessons,
             "points" to this.points,
             "level" to this.level,

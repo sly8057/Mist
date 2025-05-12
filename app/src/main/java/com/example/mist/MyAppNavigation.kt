@@ -18,6 +18,7 @@ import com.example.mist.pages.ProfilePage
 import com.example.mist.pages.QuizPage
 import com.example.mist.pages.SignupPage
 import com.example.mist.pages.StartPage
+import com.example.mist.pages.EditProfilePage
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
@@ -96,6 +97,13 @@ fun MyAppNavigation(
                 navController = navController,
                 authViewModel = authViewModel,
                 lessonViewModel = lessonViewModel
+            )
+        }
+        composable("editProfile") {
+            EditProfilePage(
+                modifier = modifier,
+                navController = navController,
+                authViewModel = authViewModel
             )
         }
     }

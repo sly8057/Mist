@@ -1,12 +1,25 @@
 package com.example.mist
 
 import android.util.Log
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.mist.models.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 class AuthViewModel : ViewModel() {
 
@@ -14,6 +27,9 @@ class AuthViewModel : ViewModel() {
 
     private val _authState = MutableLiveData<AuthState>()
     val authState: LiveData<AuthState> = _authState
+
+    private val _userData = MutableStateFlow<User?>(null)
+    val userData: StateFlow<User?> = _userData.asStateFlow()
 
     init {
         checkAuthStatus()
@@ -77,14 +93,14 @@ class AuthViewModel : ViewModel() {
     }
 
     private fun createUser(displayName: String) {
-        val userId = auth.currentUser?.uid
+        val userId = auth.currentUser?.uid ?: return
 
         val user = User(
-            userId = userId.toString(),
-            name = displayName,
+            userId = userId,
+            nickname = displayName,
             email = auth.currentUser?.email.toString(),
-//            hobby = "Miscellaneous",
-            lessons = emptyList(),
+            hobby = "Todos",
+            bookmarks = emptyList(),
             completedLessons = emptyList(),
             points = 0,
             level = "0",
@@ -92,24 +108,86 @@ class AuthViewModel : ViewModel() {
         ).toMap()
 
         FirebaseFirestore.getInstance().collection("users")
-            .add(user)
+            .document(userId)
+            .set(user)
             .addOnSuccessListener {
-                Log.d("AuthViewModel", "User ${it.id} created successfully")
+                Log.d("AuthViewModel", "User $userId created successfully")
             } .addOnFailureListener {
                 Log.d("AuthViewModel", "Error creating user: ${it.message}")
             }
     }
 
-    fun updateUserHobby(hobby: String, onComplete: (Boolean) -> Unit) {
-        val userId = auth.currentUser?.uid ?: return onComplete(false)
+    fun saveUserHobby(hobby: String, onSuccess: (Boolean) -> Unit){
+        auth.currentUser?.uid?.let { uid ->
+            viewModelScope.launch {
+                try {
+                    val userData = mapOf(
+                        "hobby" to hobby
+                    )
 
-        FirebaseFirestore.getInstance().collection("users")
-            .document(userId)
-            .update("hobby", hobby)
-            .addOnSuccessListener {
-                onComplete(true)
-            } .addOnFailureListener {
-                onComplete(false)
+
+                    Firebase.firestore.collection("users").document(uid)
+                        .update(userData)
+                        .addOnSuccessListener {
+                            Log.d("AuthViewModel", "Hobby actualizado correctamente")
+                            onSuccess(true)
+                        }.addOnFailureListener {
+                            Log.d("AuthViewModel", "Error al actualizar el hobby")
+                            onSuccess(false)
+                        }
+                } catch(e: Exception){
+                    Log.e("AuthViewModel", "Excepción al guardar el hobby", e)
+                    onSuccess(false)
+                }
+            }
+        }
+    }
+
+    fun editUser(name:String, profilePicture:String, onSuccess: (Boolean) -> Unit){
+        auth.currentUser?.uid?.let { uid ->
+            viewModelScope.launch {
+                try {
+                    val userData = mapOf(
+                        "nickname" to name,
+                        "profilePicture" to profilePicture
+                    )
+
+
+                    Firebase.firestore.collection("users").document(uid)
+                        .update(userData)
+                        .addOnSuccessListener {
+                            Log.d("AuthViewModel", "Perfil actualizado correctamente")
+                            onSuccess(true)
+                            loadUserData()
+                        }.addOnFailureListener {
+                            Log.d("AuthViewModel", "Error al actualizar el perfil")
+                            onSuccess(false)
+                        }
+                } catch(e: Exception){
+                    Log.e("AuthViewModel", "Excepción al editar el perfil", e)
+                    onSuccess(false)
+                }
+            }
+        }
+    }
+
+    fun loadUserData(){
+        auth.currentUser?.uid?.let { uid ->
+            viewModelScope.launch {
+                try {
+                    Firebase.firestore.collection("users").document(uid)
+                        .get()
+                        .addOnSuccessListener { document ->
+                            if(document.exists()){
+                                val user = document.toObject(User::class.java)?.copy(userId = uid)
+                                _userData.value = user
+                            }
+                        }.addOnFailureListener{ e ->
+                            Log.e("AuthViewModel", "Error al cargar datos del usuario", e)
+                        }
+                }catch (e: Exception){
+                    Log.e("AuthViewModel", "Excepcion al cargar los datos", e)
+                }                }
             }
     }
 
@@ -126,4 +204,10 @@ sealed class AuthState{
     object Unauthenticated : AuthState()
     object Loading : AuthState()
     data class Error(val message : String) : AuthState()
+}
+
+sealed class UserState{
+    object Loading: UserState()
+    data class Success(val user: User) : UserState()
+    data class Error(val message: String) : UserState()
 }

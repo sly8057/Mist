@@ -50,7 +50,7 @@ fun QuizPopUp(
                 TextButton(
                     onClick = {
                         val hobby = winnerCategories.keys.first()
-                        authViewModel.updateUserHobby(hobby) { success ->
+                        authViewModel.saveUserHobby(hobby) { success ->
                             if (success) {
                                 navController.navigate("home")
                             } else {
@@ -108,7 +108,7 @@ fun QuizPopUp(
                         horizontalAlignment = Alignment.CenterHorizontally){
                         Button(
                             onClick = {
-                                authViewModel.updateUserHobby(winnerCategories.keys.elementAt(0)) { success ->
+                                authViewModel.saveUserHobby(winnerCategories.keys.elementAt(0)) { success ->
                                     if (success) {
                                         navController.navigate("home") {
                                             popUpTo("home") { inclusive = true }
@@ -137,7 +137,7 @@ fun QuizPopUp(
 
                         Button(
                             onClick = {
-                                authViewModel.updateUserHobby(winnerCategories.keys.elementAt(1)) { success ->
+                                authViewModel.saveUserHobby(winnerCategories.keys.elementAt(1)) { success ->
                                     if (success) {
                                         navController.navigate("home") {
                                             popUpTo("home") { inclusive = true }
