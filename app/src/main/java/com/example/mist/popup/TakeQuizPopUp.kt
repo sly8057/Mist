@@ -31,14 +31,11 @@ import com.example.mist.AuthViewModel
 import com.example.mist.R
 
 @Composable
-fun SignOutPopUp(
+fun TakeQuizPopUp(
     onDismiss: () -> Unit,
     onConfirm: () -> Unit,
     navController: NavController,
-    authViewModel: AuthViewModel
 ) {
-    val authState = authViewModel.authState.observeAsState()
-    val context = LocalContext.current
 
     AlertDialog(onDismissRequest = onDismiss,
         dismissButton = {
@@ -63,26 +60,26 @@ fun SignOutPopUp(
         },
 
         modifier = Modifier
-            //.height(IntrinsicSize.Min)
+        //.height(IntrinsicSize.Min)
         ,
         title = {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(imageVector = Icons.Default.Info, contentDescription = null)
                 Spacer(Modifier.width(10.dp))
                 Text(
-                    text = "Cerrar sesión",
+                    text = "Quiz de aficiones",
                     style = TextStyle(fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_bold))),
                     fontSize = 20.sp,
                 )
             }
         },
         text = {
-                Row {
-                    Text(
-                        text = "¿Segura/o de que quieres cerrar sesión?",
-                        style = TextStyle(fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_regular)))
-                    )
-                }
+            Row {
+                Text(
+                    text = "¿Quieres tomar el quiz de aficiones de nuevo?",
+                    style = TextStyle(fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_regular)))
+                )
+            }
         })
 
 }

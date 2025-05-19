@@ -65,11 +65,23 @@ import com.example.mist.ui.theme.backgroundColor
 import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.math.Stats
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 
 @Composable
 fun ProfilePage(modifier: Modifier = Modifier, navController: NavHostController, authViewModel: AuthViewModel) {
 
     val authState = authViewModel.authState.observeAsState()
+
+    var showLogoutPopup by remember { mutableStateOf(false) }
+    if(showLogoutPopup) com.example.mist.popup.SignOutPopUp(
+        onDismiss = { showLogoutPopup = false },
+        onConfirm = {
+            authViewModel.signout()
+            showLogoutPopup = false
+        },
+        navController,
+        authViewModel
+    )
 
     LaunchedEffect(authState.value) {
         when(authState.value) {
@@ -90,7 +102,7 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavHostController,
                 nivelUsuario = 10,
                 onClick = { authViewModel.signout() }
             )*/
-            CustomTopBar(title = "Perfil", onClick = { authViewModel.signout() }, navController)
+            CustomTopBar(title = "Perfil", onClick = { showLogoutPopup = true }, navController)
         }
     ) { innerPadding ->
         ProfileContent(modifier.padding(innerPadding), authViewModel, navController)
@@ -259,6 +271,17 @@ fun ProfileContent(modifier: Modifier = Modifier, authViewModel: AuthViewModel, 
 @Composable
 fun StatsCard(quantity: String, category: String, hobby: Boolean = false,
               editProfile: Boolean = false, navController: NavHostController){
+
+    var showTakeQuizPopUp by remember { mutableStateOf(false) }
+    if(showTakeQuizPopUp) com.example.mist.popup.TakeQuizPopUp(
+        onDismiss = { showTakeQuizPopUp = false },
+        onConfirm = {
+            navController.navigate("quiz")
+            showTakeQuizPopUp = false
+        },
+        navController
+    )
+
     OutlinedCard(
         colors = CardDefaults.cardColors(
             containerColor = Night
@@ -271,7 +294,7 @@ fun StatsCard(quantity: String, category: String, hobby: Boolean = false,
                 if(hobby || editProfile){
                 Modifier.clickable {
                     when{
-                        hobby -> navController.navigate("quiz")
+                        hobby -> { showTakeQuizPopUp = true }
                         editProfile -> navController.navigate("editProfile")
                     }
                 }
