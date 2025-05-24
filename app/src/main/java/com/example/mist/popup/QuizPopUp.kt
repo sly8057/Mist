@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
@@ -25,6 +26,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -38,46 +40,35 @@ fun QuizPopUp(
     navController: NavController,
     authViewModel: AuthViewModel
 ) {
-    val authState = authViewModel.authState.observeAsState()
     val maxValue = scores.values.maxOrNull()
     val winnerCategories = scores.filter { it.value == maxValue }
-    var winner = ""
     val context = LocalContext.current
 
-    AlertDialog(onDismissRequest = onDismiss,
+    AlertDialog( onDismissRequest = onDismiss,
+        modifier = Modifier.height(IntrinsicSize.Min),
         confirmButton = {
-            if (winnerCategories.size == 1) {
+            if (winnerCategories.size == 1)
                 TextButton(
                     onClick = {
                         val hobby = winnerCategories.keys.first()
                         authViewModel.saveUserHobby(hobby) { success ->
-                            if (success) {
+                            if (success)
                                 navController.navigate("home")
-                            } else {
+                            else
                                 Toast.makeText(context, "Error al actualizar hobby", Toast.LENGTH_SHORT).show()
-                            }
                         }
                     }
                 ) {
-                    Text("Excelente!!")
-                }
-            }
-           /* if (winnerCategories.size == 1) {
-                TextButton(
-                    onClick = {
-                        navController.navigate("home")
-                    }
-                ) {
                     Text(
-                        "Excelente!!",
-                        style = TextStyle(fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_extrabold)))
+                        text = "Excelente!!",
+                        style = TextStyle(
+                            fontSize = 16.sp,
+                            textDecoration = TextDecoration.Underline,
+                            fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_extrabold))
+                        )
                     )
                 }
-            }*/
         },
-
-        modifier = Modifier
-            .height(IntrinsicSize.Min),
         title = {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(imageVector = Icons.Default.Info, contentDescription = null)
@@ -92,9 +83,7 @@ fun QuizPopUp(
         text = {
             if (winnerCategories.size > 1) {
                 Column(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    //horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.Center
                 ) {
 
@@ -102,11 +91,15 @@ fun QuizPopUp(
                         style = TextStyle(fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_regular))),
                         fontSize = 15.sp
                     )
+
                     Spacer(Modifier.height(20.dp))
 
-                    Column (modifier = Modifier.fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally){
+                    Column (
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
                         Button(
+                            modifier = Modifier.fillMaxWidth().height(50.dp),
                             onClick = {
                                 authViewModel.saveUserHobby(winnerCategories.keys.elementAt(0)) { success ->
                                     if (success) {
@@ -119,36 +112,39 @@ fun QuizPopUp(
                                 }
                             }
                         ) {
-                            Text(text = winnerCategories.keys.elementAt(0))
+                            Text(
+                                text = winnerCategories.keys.elementAt(0),
+                                style = TextStyle(
+                                    fontSize = 16.sp,
+                                    textDecoration = TextDecoration.Underline,
+                                    fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_bold))
+                                )
+                            )
                         }
-                        /*Button(
-                            onClick = {
-                                winner = winnerCategories.keys.elementAt(0)
-                                //Toast.makeText(context,"Elegiste: $winner", Toast.LENGTH_SHORT).show()
-                                navController.navigate("home")
-                            },
-                            modifier = Modifier
-                                .width(180.dp)
-                        ) {
-                            Text(text = winnerCategories.keys.elementAt(0))
-                        }*/
 
                         Spacer(Modifier.height(10.dp))
 
                         Button(
+                            modifier = Modifier.fillMaxWidth().height(50.dp),
                             onClick = {
                                 authViewModel.saveUserHobby(winnerCategories.keys.elementAt(1)) { success ->
-                                    if (success) {
+                                    if (success)
                                         navController.navigate("home") {
                                             popUpTo("home") { inclusive = true }
                                         }
-                                    } else {
+                                    else
                                         Toast.makeText(context, "Error al actualizar hobby", Toast.LENGTH_SHORT).show()
-                                    }
                                 }
                             }
                         ) {
-                            Text(text = winnerCategories.keys.elementAt(1))
+                            Text(
+                                text = winnerCategories.keys.elementAt(1),
+                                style = TextStyle(
+                                    fontSize = 16.sp,
+                                    textDecoration = TextDecoration.Underline,
+                                    fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_bold))
+                                )
+                            )
                         }
                     }
                 }
@@ -163,7 +159,6 @@ fun QuizPopUp(
                         style = TextStyle(fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_bold)))
                     )
                 }
-                winner = winnerCategories.keys.joinToString()
             }
         })
 
