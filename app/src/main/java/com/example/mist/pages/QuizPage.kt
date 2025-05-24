@@ -1,5 +1,6 @@
 package com.example.mist.pages
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -17,14 +18,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -37,11 +40,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -51,7 +57,6 @@ import com.example.mist.AuthViewModel
 import com.example.mist.R
 import com.example.mist.components.QuizTopBar
 import com.example.mist.ui.theme.*
-
 
 @Composable
 fun QuizPage(
@@ -65,14 +70,22 @@ fun QuizPage(
     var selectedOption by remember { mutableIntStateOf(-1) }
     val scores by remember { mutableStateOf(mutableMapOf<String, Int>()) }
     val selectedOptions = remember { mutableStateMapOf<Int, Int>() }
-    var isClicked by remember { mutableStateOf(false) }
+    val isClicked by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     val currentQuestion = questions[currentQuestionIndex]
     val progress = (currentQuestionIndex + 1).toFloat() / questions.size
     var showDialog by remember { mutableStateOf(false) }
+    var showConfirmation by remember { mutableStateOf(false) }
     if (showDialog) com.example.mist.popup.QuizPopUp(
         onDismiss = { showDialog = false },
         scores,
+        navController,
+        authViewModel
+    )
+
+    if (showConfirmation) com.example.mist.popup.LeaveQuizPopUp(
+        onDismiss = { showConfirmation = false },
         navController,
         authViewModel
     )
@@ -102,7 +115,6 @@ fun QuizPage(
                 .padding(top = innerPadding.calculateTopPadding()),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-
             Spacer(
                 modifier = Modifier
                     .height(40.dp)
@@ -150,13 +162,12 @@ fun QuizPage(
 
                 currentQuestion.options.forEachIndexed { index, option ->
                     OutlinedCard(
-                        colors = CardDefaults.cardColors(containerColor = if(isClicked) Asparagus else DutchWhite),
-                        border = BorderStroke(3.dp, if(isClicked) ForestGreen else Asparagus),
+                        colors = CardDefaults.cardColors(containerColor = if (isClicked) Asparagus else DutchWhite),
+                        border = BorderStroke(3.dp, if (isClicked) ForestGreen else Asparagus),
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(60.dp)
-                            .clickable { selectedOption = index
-                                       !isClicked},
+                            .clickable { selectedOption = index },
                         shape = RoundedCornerShape(10.dp)
                     ) {
                         Row(
@@ -164,19 +175,22 @@ fun QuizPage(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.Start
                         ) {
-                            RadioButton(
-                                selected = selectedOption == index,
-                                onClick = {
-                                    !isClicked
-                                    selectedOption = index
-                                    println(selectedOption)
-                                },
-                            )
+                            IconToggleButton(
+                                checked = selectedOption == index,
+                                onCheckedChange = { selectedOption = index }
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = if (selectedOption == index) R.drawable.ic_circle_selected else R.drawable.ic_circle_unselected),
+                                    contentDescription = "Radio Button Icon",
+                                    tint = Color.Unspecified
+                                )
+                            }
+
                             Text(
                                 text = option,
                                 style = TextStyle(
                                     fontSize = 12.sp,
-                                    color = if(isClicked) DutchWhite else EerieBlack,
+                                    color = if (isClicked) DutchWhite else EerieBlack,
                                     fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_regular))
                                 )
                             )
@@ -195,7 +209,9 @@ fun QuizPage(
                             }
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = ForestGreen),
-                        modifier = Modifier.width(90.dp).height(50.dp),
+                        modifier = Modifier
+                            .width(90.dp)
+                            .height(50.dp),
                         shape = RoundedCornerShape(10.dp)
                     ) {
                         Icon(
@@ -208,7 +224,9 @@ fun QuizPage(
                     Spacer(modifier = Modifier.width(10.dp))
 
                     Button(
-                        modifier = Modifier.fillMaxWidth().height(50.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(50.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = ForestGreen),
                         shape = RoundedCornerShape(10.dp),
                         onClick = {
@@ -223,9 +241,8 @@ fun QuizPage(
                                     }
                                 }
 
-                                if (previousSelection == null || previousSelection != selectedOption) {
+                                if (previousSelection == null || previousSelection != selectedOption)
                                     scores[category] = (scores[category] ?: 0) + 1
-                                }
                                 selectedOptions[currentQuestionIndex] = selectedOption
 
                                 if (currentQuestionIndex < questions.lastIndex) {
@@ -255,6 +272,27 @@ fun QuizPage(
                         )
                     }
                 }
+
+                Spacer(modifier = Modifier.height(15.dp))
+
+                TextButton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(IntrinsicSize.Min)
+                        .padding(5.dp),
+                    onClick = { showConfirmation = true },
+                ) {
+                    Text(
+                        text = "No quiero una categoría fija, prefiero ejercicios aleatorios.",
+                        style = TextStyle(
+                            fontSize = 12.sp,
+                            color = DutchWhite,
+                            textAlign = TextAlign.Center,
+                            textDecoration = TextDecoration.Underline,
+                            fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_regular))
+                        )
+                    )
+                }
             }
         }
     }
@@ -280,8 +318,7 @@ val questions = listOf(
             "Haciendo ejercicio o practicando deportes.",
             "Dibujando, pintando o creando ilustraciones.",
             "Jugando, viendo películas o resolviendo acertijos.",
-            "Escribiendo historias o leyendo libros.",
-            "No quiero una categoría fija, prefiero ejercicios aleatorios."
+            "Escribiendo historias o leyendo libros."
         )
     ),
     Question(
@@ -290,8 +327,7 @@ val questions = listOf(
             "Videos de deportes, rutinas de entrenamiento o competencias.",
             "Ilustraciones digitales, tutoriales de dibujo o arte visual.",
             "Streams de videojuegos, análisis de películas o juegos de mesa.",
-            "Citas de libros, análisis literarios o técnicas de escritura.",
-            "No quiero una categoría fija, prefiero ejercicios aleatorios."
+            "Citas de libros, análisis literarios o técnicas de escritura."
         )
     ),
     Question(
@@ -300,8 +336,7 @@ val questions = listOf(
             "Ser atleta, entrenador o profesional en deportes.",
             "Ser artista visual, diseñador gráfico o ilustrador.",
             "Ser creador de videojuegos, crítico de cine o desarrollador de entretenimiento.",
-            "Ser escritor, editor o periodista.",
-            "No quiero una categoría fija, prefiero ejercicios aleatorios."
+            "Ser escritor, editor o periodista."
         )
     ),
     Question(
@@ -310,8 +345,7 @@ val questions = listOf(
             "Me encanta el movimiento, la competencia y la actividad física.",
             "Expreso mis ideas a través del arte visual.",
             "Me encanta sumergirme en mundos de fantasía y entretenimiento.",
-            "Las palabras y las historias son mi pasión.",
-            "No quiero una categoría fija, prefiero ejercicios aleatorios."
+            "Las palabras y las historias son mi pasión."
         )
     ),
     Question(
@@ -320,8 +354,7 @@ val questions = listOf(
             "Con experiencias prácticas y en movimiento.",
             "A través de la observación y la creatividad.",
             "Jugando, experimentando o interactuando con tecnología.",
-            "Leyendo, escribiendo o analizando textos.",
-            "No quiero una categoría fija, prefiero ejercicios aleatorios."
+            "Leyendo, escribiendo o analizando textos."
         )
     ),
 )
