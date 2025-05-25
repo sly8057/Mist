@@ -128,6 +128,7 @@ fun ProfileContent(modifier: Modifier = Modifier, authViewModel: AuthViewModel, 
             //verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Spacer(modifier = Modifier.weight(0.25f))
 
             Image(
                 painter = painterResource(R.drawable.ic_user_astronaut),
@@ -138,6 +139,8 @@ fun ProfileContent(modifier: Modifier = Modifier, authViewModel: AuthViewModel, 
                     .clip(CircleShape)
                     .border(14.dp, DutchWhite, CircleShape)
             )
+
+            //Spacer(modifier = Modifier.weight(1f))
 
             userData?.let {
                 Text(
@@ -181,6 +184,7 @@ fun ProfileContent(modifier: Modifier = Modifier, authViewModel: AuthViewModel, 
 
                 userData?.let { StatsCard(it.hobby, " ", true, navController = navController) }
             }
+            Spacer(modifier = Modifier.weight(1f))
 
 //            Row(
 //                modifier = Modifier
@@ -242,36 +246,18 @@ fun ProfileContent(modifier: Modifier = Modifier, authViewModel: AuthViewModel, 
 //
 //
 //            }
-
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                items(7) { index ->
-                    LessonCard(R.drawable.ic_java, "Java básico", 55)
-                    LessonCard(R.drawable.ic_git, "Git", 70)
-                    LessonCard(R.drawable.ic_android, "AndroidStudio", 20)
-                    LessonCard(R.drawable.ic_database, "Bases de datos", 100)
-                    LessonCard(R.drawable.ic_java, "POO", 90)
-                    LessonCard(R.drawable.ic_camera, "POE", 10)
-                    LessonCard(R.drawable.ic_user_astronaut, "Programación estructurada", 100)
-                }
-
-            }
-            
-            TextButton(onClick = {
-
-            }) {
-                Text(text = "Sign out")
-            }
         }
     }
 }
 
 @Composable
-fun StatsCard(quantity: String, category: String, hobby: Boolean = false,
-              editProfile: Boolean = false, navController: NavHostController){
-
+fun StatsCard(
+    quantity: String,
+    category: String,
+    hobby: Boolean = false,
+    editProfile: Boolean = false,
+    navController: NavHostController
+){
     var showTakeQuizPopUp by remember { mutableStateOf(false) }
     if(showTakeQuizPopUp) com.example.mist.popup.TakeQuizPopUp(
         onDismiss = { showTakeQuizPopUp = false },
@@ -313,14 +299,14 @@ fun StatsCard(quantity: String, category: String, hobby: Boolean = false,
             Text(
                 text = quantity,
                 style = TextStyle(
-                    fontSize = if(hobby) 16.sp else 20.sp,
+                    fontSize = /*if(hobby)*/ 16.sp /*else 20.sp*/,
                     fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_regular)),
                     fontWeight = FontWeight(800),
                     color = DutchWhite,
                     textAlign = TextAlign.Center
                 ),
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
             )
 
             if(!hobby) {

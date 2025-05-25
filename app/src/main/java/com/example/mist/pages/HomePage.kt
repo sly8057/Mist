@@ -53,6 +53,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.runtime.collectAsState
@@ -261,6 +262,8 @@ fun LessonCard(
                     }
                 }
                 .fillMaxSize()
+                //.fillMaxWidth()
+                //.height(90.dp)
                 .padding(
                     start = 0.dp,
                     end = 0.dp,
@@ -273,7 +276,7 @@ fun LessonCard(
             Icon(
                 painter = painterResource(id = iconResId),
                 contentDescription = lesson.goal,
-                modifier = Modifier.size(35.dp)
+                modifier = Modifier.size(30.dp)
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
@@ -281,12 +284,16 @@ fun LessonCard(
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 2,
                 style = TextStyle(
-                    fontSize = 14.sp,
+                    fontSize = 12.sp,
                     fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_semibold)),
                     textAlign = TextAlign.Center,
                     color = DutchWhite
                 ),
-                modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Max),
+                modifier = Modifier
+                    .width(90.dp)
+                    //.fillMaxWidth()
+                    //.padding(horizontal = 4.dp)
+                    //.height(IntrinsicSize.Max),
             )
         }
     }

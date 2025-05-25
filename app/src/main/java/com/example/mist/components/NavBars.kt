@@ -331,7 +331,7 @@ fun CustomTopBar(
                 Icon(
                     painter = painterResource(id = if(variant) R.drawable.ic_poo_storm_solid else R.drawable.ic_robot_white),
                     contentDescription = "Hints",
-                    tint = EerieBlack
+                    tint = DutchWhite
                 )
             }
         }
