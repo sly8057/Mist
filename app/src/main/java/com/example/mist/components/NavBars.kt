@@ -307,8 +307,9 @@ fun CustomTopBar(
                     modifier = Modifier.size(40.dp)
                 ) {
                     Icon(
-                        imageVector = getImageVectorFromDrawable(R.drawable.ic_back_arrow),
+                        painter = painterResource(id = R.drawable.ic_back_arrow),
                         contentDescription = "Back",
+                        tint = if(variant) EerieBlack else DutchWhite
                     )
                 }
             } else
@@ -325,15 +326,12 @@ fun CustomTopBar(
             )
             IconButton(
                 onClick = { onClick() },
-                modifier = Modifier.size(40.dp).border(
-                    width = 2.dp,
-                    color = if(variant) EerieBlack else DutchWhite,
-                    shape = CircleShape
-                )
+                modifier = Modifier.size(if(variant) 25.dp else 40.dp)
             ) {
                 Icon(
-                    painter = painterResource(id = if(variant) R.drawable.ic_robot_black else R.drawable.ic_robot_white),
-                    contentDescription = "Logout",
+                    painter = painterResource(id = if(variant) R.drawable.ic_poo_storm_solid else R.drawable.ic_robot_white),
+                    contentDescription = "Hints",
+                    tint = EerieBlack
                 )
             }
         }
