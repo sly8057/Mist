@@ -28,6 +28,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -35,17 +38,24 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import com.example.mist.R
 import com.example.mist.components.SecondaryInputField
 import com.example.mist.models.Lesson
 import com.example.mist.models.LessonViewModel
 import com.example.mist.ui.theme.DutchWhite
 import com.example.mist.ui.theme.EerieBlack
+import com.example.mist.ui.theme.ForestGreen
 
 @Composable
 fun ExplorePage(
@@ -153,16 +163,61 @@ fun ExploreContent(
         selected?.let { lesson ->
             AlertDialog(
                 onDismissRequest = { lessonViewModel.dismissLessonDialog() },
-                title = { Text(text = lesson.title) },
+                title = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(imageVector = Icons.Default.AddCircle, contentDescription = null)
+                        Spacer(Modifier.width(10.dp))
+                        Text(
+                            text = lesson.title,
+                            style = TextStyle(fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_bold))),
+                            fontSize = 20.sp,
+                        )
+                    }
+                },
                 text = {
                     Column {
-                        Row {
-                            Text(text = "Dificultad: ${lesson.level}")
-                            Spacer(modifier = Modifier.width(16.dp))
-                            Text(text = "Afición: ${lesson.hobby}")
+                        //Row {
+                            Text(text = "Dificultad: ${lesson.level}",
+                                style = TextStyle(fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_regular))),
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(text = "Afición: ${lesson.hobby}",
+                                style = TextStyle(fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_regular))),
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold)
+                            Spacer(modifier = Modifier.height(8.dp))
+                        //}
+                        Text(text = "Objetivo: ",
+                            style = TextStyle(fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_regular))),
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(text = lesson.goal,
+                            style = TextStyle(fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_regular))),
+                            fontSize = 14.sp)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(text = "Instrucciones: ",
+                            style = TextStyle(fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_regular))),
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Bold)
+                        lesson.brief.forEachIndexed { index, instruction ->
+                            Row(verticalAlignment = Alignment.Top, modifier = Modifier.padding(start = 8.dp)) {
+                                /*Text(
+                                    text = "${index + 1}. ",
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 14.sp,
+                                    style = TextStyle(fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_regular)))
+                                )*/
+                                Text(
+                                    text = instruction,
+                                    fontSize = 14.sp,
+                                    style = TextStyle(fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_regular)))
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(2.dp))
                         }
-                        Text(text = "Objetivo: ${lesson.goal}")
-                        Text(text = "Instrucciones: ${lesson.brief}")
                     }
                 },
                 confirmButton = {
@@ -178,14 +233,26 @@ fun ExploreContent(
                         }
                         lessonViewModel.dismissLessonDialog()
                     }) {
-                        Text(text = "Agregar al Home")
+                        Text(text = "Agregar al Home",
+                            style = TextStyle(
+                                fontSize = 14.sp,
+                                color = ForestGreen,
+                                textDecoration = TextDecoration.Underline,
+                                fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_extrabold))
+                            ))
                     }
                 },
                 dismissButton = {
                     TextButton(onClick = {
                         lessonViewModel.dismissLessonDialog()
                     }) {
-                        Text(text = "Cancelar")
+                        Text(text = "Cancelar",
+                            style = TextStyle(
+                                fontSize = 14.sp,
+                                color = EerieBlack,
+                                textDecoration = TextDecoration.Underline,
+                                fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_extrabold))
+                            ))
                     }
                 }
             )

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -24,11 +25,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.mist.AuthViewModel
 import com.example.mist.R
+import com.example.mist.ui.theme.EerieBlack
 
 @Composable
 fun TakeQuizPopUp(
@@ -38,23 +41,28 @@ fun TakeQuizPopUp(
 ) {
 
     AlertDialog(onDismissRequest = onDismiss,
-        dismissButton = {
+        confirmButton = {
             TextButton(
                 onClick = onConfirm
             ) {
                 Text(
                     "Sí",
-                    style = TextStyle(fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_extrabold)))
+                    style = TextStyle(
+                        fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_extrabold)),
+                        textDecoration = TextDecoration.Underline)
                 )
             }
         },
-        confirmButton = {
+        dismissButton = {
             TextButton(
                 onClick = onDismiss
             ) {
                 Text(
                     "No",
-                    style = TextStyle(fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_extrabold)))
+                    style = TextStyle(
+                        fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_extrabold)),
+                        color = EerieBlack,
+                        textDecoration = TextDecoration.Underline)
                 )
             }
         },
@@ -64,7 +72,7 @@ fun TakeQuizPopUp(
         ,
         title = {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(imageVector = Icons.Default.Info, contentDescription = null)
+                Icon(imageVector = Icons.Default.Face, contentDescription = null)
                 Spacer(Modifier.width(10.dp))
                 Text(
                     text = "Quiz de aficiones",
