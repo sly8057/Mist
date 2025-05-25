@@ -89,7 +89,7 @@ fun EditProfilePage(modifier: Modifier, navController: NavHostController, authVi
                 nivelUsuario = 10,
                 onClick = { authViewModel.signout() }
             )*/
-            CustomTopBar(title = "Editar perfil", onClick = {  }, navController)
+            CustomTopBar(title = "Editar perfil", onClick = {  }, navController = navController)
         }
     ) { innerPadding ->
         EditProfileContent(modifier.padding(innerPadding), authViewModel, navController)

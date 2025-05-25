@@ -55,7 +55,7 @@ import androidx.navigation.NavHostController
 import com.example.mist.AuthState
 import com.example.mist.AuthViewModel
 import com.example.mist.R
-import com.example.mist.components.QuizTopBar
+import com.example.mist.components.CustomTopBar
 import com.example.mist.ui.theme.*
 
 @Composable
@@ -100,11 +100,12 @@ fun QuizPage(
     Scaffold(
         contentWindowInsets = WindowInsets.systemBars,
         topBar = {
-            QuizTopBar(
-                title = "QUIZ",
+            CustomTopBar(
+                title = "Quiz",
+                onClick = { authViewModel.signout() },
                 progress = progress,
                 currentProgress = "${(progress * questions.size).toInt()}/${questions.size}",
-                onClick = { authViewModel.signout() }
+                navController = navController
             )
         }
     ) { innerPadding ->

@@ -102,7 +102,7 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavHostController,
                 nivelUsuario = 10,
                 onClick = { authViewModel.signout() }
             )*/
-            CustomTopBar(title = "Perfil", onClick = { showLogoutPopup = true }, navController)
+            CustomTopBar(title = "Perfil", onClick = { showLogoutPopup = true }, navController = navController)
         }
     ) { innerPadding ->
         ProfileContent(modifier.padding(innerPadding), authViewModel, navController)
