@@ -37,10 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.mist.AuthState
 import com.example.mist.AuthViewModel
-import com.example.mist.components.PrimaryButton
-import com.example.mist.components.PrimaryInputField
-import com.example.mist.components.PrimaryTextButton
-import com.example.mist.components.SecondaryTextButton
+import com.example.mist.components.*
 import com.example.mist.ui.theme.*
 
 @Composable
