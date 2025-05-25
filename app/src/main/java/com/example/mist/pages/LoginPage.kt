@@ -143,7 +143,15 @@ fun LoginPage(
 
             PrimaryTextButton(
                 text = "¿Olvidaste la contraseña?",
-                onClick = { /* acción */ },
+                onClick = {
+                    authViewModel.sendPasswordResetEmail(email) { success, errorMessage ->
+                        if (success) {
+                            Toast.makeText(context, "Correo de recuperación enviado", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                },
                 modifier = Modifier
                     .align(Alignment.End)
                     .padding(end = 20.dp)

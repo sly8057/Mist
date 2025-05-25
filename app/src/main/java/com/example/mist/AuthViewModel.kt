@@ -191,6 +191,25 @@ class AuthViewModel : ViewModel() {
             }
     }
 
+    fun sendPasswordResetEmail(email: String, onResult: (Boolean, String?) -> Unit) {
+        if (email.isEmpty()) {
+            onResult(false, "El correo no puede estar vacío")
+            return
+        }
+
+        auth.sendPasswordResetEmail(email)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d("AuthViewModel", "Correo de recuperación enviado a $email")
+                    onResult(true, null)
+                } else {
+                    val errorMessage = task.exception?.message ?: "No se pudo enviar el correo de recuperación"
+                    Log.e("AuthViewModel", "Error al enviar el correo de recuperación", task.exception)
+                    onResult(false, errorMessage)
+                }
+            }
+    }
+
     fun signout(){
         auth.signOut()
         _authState.value = AuthState.Unauthenticated
