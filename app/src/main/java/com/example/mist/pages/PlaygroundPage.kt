@@ -144,7 +144,7 @@ fun PlaygroundContent(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "Lecci贸n seleccionada:\n\t\t${lesson.title}", fontSize = 20.sp)
+            Text(text = "Lección seleccionada:\n\t\t${lesson.title}", fontSize = 20.sp)
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(text = "Objetivo: ${lesson.goal}", fontSize = 16.sp)

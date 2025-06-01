@@ -143,7 +143,7 @@ fun SignupPage(
             )
 
             Text(
-                text = if(isChecked) "Realizar quiz de afición" else "No realizar quiz de afición",
+                text = if(isChecked) "Presiona aqui, para no realizar quiz de afición" else "Presiona aqui, para realizar quiz de afición",
                 style = TextStyle(
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onBackground,

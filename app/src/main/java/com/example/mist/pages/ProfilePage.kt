@@ -102,7 +102,12 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavHostController,
                 nivelUsuario = 10,
                 onClick = { authViewModel.signout() }
             )*/
-            CustomTopBar(title = "Perfil", onClick = { showLogoutPopup = true }, navController = navController)
+            CustomTopBar(
+                title = "Perfil",
+                showBackButton = true,
+                onClick = { showLogoutPopup = true },
+                navController = navController
+            )
         }
     ) { innerPadding ->
         ProfileContent(modifier.padding(innerPadding), authViewModel, navController)
@@ -171,10 +176,11 @@ fun ProfileContent(modifier: Modifier = Modifier, authViewModel: AuthViewModel, 
                 )
             }
 
+            Spacer(modifier = Modifier.height(30.dp))
+
             Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 20.dp),
+                    .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ){
@@ -182,7 +188,7 @@ fun ProfileContent(modifier: Modifier = Modifier, authViewModel: AuthViewModel, 
 
                 StatsCard("Editar perfil", " ", editProfile = true, navController = navController)
 
-                userData?.let { StatsCard(it.hobby, " ", true, navController = navController) }
+                userData?.let { StatsCard(it.hobby, "Repetir quiz", navController = navController) }
             }
             Spacer(modifier = Modifier.weight(1f))
 
@@ -279,7 +285,7 @@ fun StatsCard(
             .then(
                 if(hobby || editProfile){
                 Modifier.clickable {
-                    when{
+                    when {
                         hobby -> { showTakeQuizPopUp = true }
                         editProfile -> navController.navigate("editProfile")
                     }
@@ -290,7 +296,7 @@ fun StatsCard(
     ) {
         Column (
             modifier = Modifier
-                .padding(horizontal = 2.dp, vertical = 4.dp)
+                .padding(4.dp)
                 .fillMaxHeight()
                 .fillMaxWidth(),
             verticalArrangement = Arrangement.Center,

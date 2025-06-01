@@ -87,14 +87,32 @@ fun HomePage(
         contentWindowInsets = WindowInsets.systemBars,
         floatingActionButton = {
             FloatingActionButton(
+                modifier = Modifier.size(80.dp),
                 onClick = { navController.navigate("explore") },
                 containerColor = ForestGreen,
                 contentColor = DutchWhite
             ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_add),
-                    contentDescription = "Agregar lección"
-                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_add),
+                        contentDescription = "Agregar lección",
+                        modifier = Modifier.size(30.dp)
+                    )
+                    Text(
+                        text = "Agregar lección",
+                        style = TextStyle(
+                            fontSize = 10.sp,
+                            fontFamily = FontFamily(Font(R.font.relay_jetbrains_mono_semibold)),
+                            color = DutchWhite
+                        ),
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
         },
         bottomBar = { CustomBottomBar(navController) },

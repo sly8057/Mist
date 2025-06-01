@@ -50,6 +50,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import com.example.mist.R
+import com.example.mist.components.CustomTopBar
 import com.example.mist.components.SecondaryInputField
 import com.example.mist.models.Lesson
 import com.example.mist.models.LessonViewModel
@@ -64,12 +65,25 @@ fun ExplorePage(
     authViewModel: AuthViewModel,
     lessonViewModel: LessonViewModel
 ) {
+    var showLogoutPopup by remember { mutableStateOf(false) }
+    if(showLogoutPopup) com.example.mist.popup.SignOutPopUp(
+        onDismiss = { showLogoutPopup = false },
+        onConfirm = {
+            authViewModel.signout()
+            showLogoutPopup = false
+        },
+        navController,
+        authViewModel
+    )
+
     Scaffold(
         contentWindowInsets = WindowInsets.systemBars,
         bottomBar = { CustomBottomBar(navController) },
         topBar = {
-            DefaultTopBar(
+            CustomTopBar(
                 title = "Explora Lecciones",
+                showBackButton = true,
+                onClick = { showLogoutPopup = true },
                 navController = navController
             )
         }
